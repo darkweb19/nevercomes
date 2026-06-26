@@ -1,0 +1,1 @@
+-- seed.sql — reference/sample catalog for local dev. Populated in Phase 2.

@@ -1,0 +1,49 @@
+name: Database
+
+# Keeps production schema in sync with committed migrations, and guards against stale types.
+#   - PRs: spin up local Supabase, regenerate types, fail if types/database.ts is out of date.
+#   - main: push migrations to production.
+#
+# Required repo secrets:
+#   SUPABASE_ACCESS_TOKEN   (Supabase account access token)
+#   SUPABASE_DB_PASSWORD    (prod database password)
+#   SUPABASE_PROJECT_REF    (prod project ref)
+
+on:
+  push:
+    branches: [main]
+    paths: ['supabase/migrations/**', 'types/database.ts']
+  pull_request:
+    paths: ['supabase/migrations/**', 'types/database.ts']
+
+jobs:
+  verify-types:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: supabase/setup-cli@v1
+        with: { version: latest }
+      - run: supabase start
+      - name: Fail if generated types are stale
+        run: |
+          supabase gen types typescript --local > /tmp/db.ts
+          if ! diff -q /tmp/db.ts types/database.ts > /dev/null; then
+            echo "::error::types/database.ts is stale — run 'pnpm db:types' and commit."
+            diff /tmp/db.ts types/database.ts || true
+            exit 1
+          fi
+          echo "types are in sync."
+
+  deploy:
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    needs: verify-types
+    env:
+      SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+      SUPABASE_DB_PASSWORD: ${{ secrets.SUPABASE_DB_PASSWORD }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: supabase/setup-cli@v1
+        with: { version: latest }
+      - run: supabase link --project-ref ${{ secrets.SUPABASE_PROJECT_REF }}
+      - run: supabase db push
