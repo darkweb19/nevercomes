@@ -1,3 +1,38 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer base {
+  body {
+    @apply bg-paper text-ink font-sans;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* Visible keyboard focus everywhere (a11y) — the one bold accent, used sparingly. */
+  :focus-visible {
+    outline: 2px solid theme("colors.stamp");
+    outline-offset: 2px;
+  }
+
+  /* Respect reduced-motion globally: degrade animations/transitions to near-instant.
+     The courier animation (Phase 7) degrades to a stepped/static state on top of this. */
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+}
+
+@layer components {
+  /* Perforation / route motif: a 1px dashed tear-edge in --rule.
+     Reused by Card's top edge, dividers, and (later) the courier route line. */
+  .perforation {
+    border-top: 1px dashed theme("colors.rule");
+  }
+}
