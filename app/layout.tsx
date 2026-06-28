@@ -36,6 +36,10 @@ export default function RootLayout({
     <html
       lang="en"
       className={`theme-dark ${display.variable} ${mono.variable}`}
+      // The noFlashTheme script below mutates <html>'s class from localStorage
+      // before React hydrates, so its class legitimately differs from this server
+      // render. Suppress the (expected) one-level attribute mismatch on <html> only.
+      suppressHydrationWarning
     >
       <head>
         <script dangerouslySetInnerHTML={{ __html: noFlashTheme }} />
