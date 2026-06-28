@@ -16,12 +16,12 @@ Plan: `~/.claude/plans/synchronous-sprouting-yao.md`.
 - [x] Migrate Phase-1 primitives (Button/Input/Card/Badge/Sheet/Stamp) onto token aliases; update `/scratch` + add ThemeToggle
 - [x] `pnpm verify` green + `pnpm build` clean (visual eyeball deferred to Slice 3 browser test)
 
-## Slice 1 — Primitive coverage
-- [ ] Button: add `secondary` variant, `lg` size, `block` prop
-- [ ] Card: add `raised`, `padded` props (keep `perforated`)
-- [ ] New `Eyebrow` (mono uppercase label, optional rule)
-- [ ] New `Stepper` (qty −/+, value/onChange, min 1, keyboard)
-- [ ] Export from `index.ts`; add to `/scratch`; `pnpm verify` green
+## Slice 1 — Primitive coverage  ✅
+- [x] Button: add `secondary` variant, `lg` size, `block` prop
+- [x] Card: add `raised`, `padded` props (keep `perforated`)
+- [x] New `Eyebrow` (mono uppercase label, optional rule)
+- [x] New `Stepper` (qty −/+, value/onChange, min 1, keyboard)
+- [x] Export from `index.ts`; add to `/scratch`; `pnpm verify` green
 
 ## Slice 2 — Data layer + money util + seed options
 - [ ] `lib/utils/money.ts` `formatCents` + `tests/unit/money.test.ts`

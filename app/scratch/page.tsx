@@ -5,9 +5,11 @@ import {
   Badge,
   Button,
   Card,
+  Eyebrow,
   Input,
   Sheet,
   Stamp,
+  Stepper,
   ThemeToggle,
 } from "@/components/ui";
 
@@ -57,6 +59,7 @@ function Section({
 
 export default function ScratchPage() {
   const [sheetOpen, setSheetOpen] = useState(false);
+  const [qty, setQty] = useState(1);
 
   return (
     <main className="mx-auto max-w-4xl space-y-12 p-8">
@@ -102,9 +105,12 @@ export default function ScratchPage() {
 
       <Section title="Button">
         <div className="flex flex-wrap items-center gap-3">
+          <Button variant="primary" size="lg">
+            Add to cart · $0.00
+          </Button>
           <Button variant="primary">Add to cart</Button>
-          <Button variant="primary" size="sm">
-            Buy now
+          <Button variant="secondary" size="sm">
+            Filters · 0
           </Button>
           <Button variant="ghost">Keep browsing</Button>
           <Button variant="ghost" size="sm">
@@ -112,6 +118,18 @@ export default function ScratchPage() {
           </Button>
           <Button disabled>Disabled</Button>
         </div>
+        <Button variant="primary" block>
+          Block button
+        </Button>
+      </Section>
+
+      <Section title="Eyebrow">
+        <Eyebrow>Open 24/7 · Nothing in stock</Eyebrow>
+        <Eyebrow rule>Delivering to</Eyebrow>
+      </Section>
+
+      <Section title="Stepper">
+        <Stepper value={qty} onChange={setQty} aria-label="Quantity" />
       </Section>
 
       <Section title="Input">
