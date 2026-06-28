@@ -83,10 +83,16 @@ matches the design. `npm run verify` green per slice. Full-loop e2e stays Phase 
 - [x] Dots degrade under `prefers-reduced-motion` (global reset); native buttons/links, keyboard via Stepper.
 - [x] `npm run verify` green (33 tests) + `npm run build` clean (/cart prerendered static, hydrates from localStorage).
 
-## Slice 5 — Polish + review + PR
-- [ ] Final a11y/motion pass; fresh-context diff review (code-reviewer agent) vs. DoD.
-- [ ] Confirm DoD: integer-cents math ✓; persists across reload ✓; drawer + page match design ✓.
-- [ ] Commit per slice; open PR `phase-4-cart` → `main` (Closes #4 if that issue exists).
+## Slice 5 — Polish + review + PR  ✅
+- [x] DoD review of the full diff (code-reviewer agent stalled on the watchdog → reviewed inline
+      instead). Found + fixed one SHOULD-FIX: **Zustand-persist hydration mismatch** — server renders
+      `CART · 0` / empty `/cart`, client rehydrates with persisted lines on first render → React
+      mismatch + empty-then-filled flash. Added `lib/store/useCartReady.ts` (`useSyncExternalStore`,
+      server snapshot `false`, like `ThemeToggle`); gated the header count + `/cart` body on it.
+- [x] Confirm DoD: integer-cents math ✓; persists across reload ✓ (now hydration-safe); drawer +
+      page built to the design ✓; `lib/sim` untouched, no secrets, no real brands (diff swept).
+- [x] `npm run verify` green (33 tests) + `npm run build` clean.
+- [ ] Open PR `phase-4-cart` → `main` (Closes #4 if that issue exists).
 
 ## Known env limitation (carry-over from Phase 3)
 - Interactive browser automation is blocked by the env's chrome-blocker hook and no web-tester

@@ -10,6 +10,7 @@ import { Input } from "@/components/ui/Input";
 import { Stepper } from "@/components/ui/Stepper";
 import { Stamp } from "@/components/ui/Stamp";
 import { useCart, LINE_SOFT_CAP } from "@/lib/store/cart";
+import { useCartReady } from "@/lib/store/useCartReady";
 import { computeTotals } from "@/lib/cart/totals";
 import { formatCents } from "@/lib/utils/money";
 
@@ -39,6 +40,9 @@ export default function CartPage() {
 
   const [checkingOut, setCheckingOut] = useState(false);
 
+  // The cart lives in localStorage; until it rehydrates, render a neutral shell so
+  // the first client render matches the (empty) server render. See useCartReady.
+  const ready = useCartReady();
   const totals = computeTotals(lines);
   const isEmpty = lines.length === 0;
 
@@ -62,7 +66,15 @@ export default function CartPage() {
           </p>
         </div>
 
-        {isEmpty ? (
+        {!ready ? (
+          /* ── Pre-hydration shell (matches the empty server render) ────── */
+          <div
+            className="pt-6 text-center font-mono text-2xs uppercase tracking-label text-fg-faint"
+            aria-hidden="true"
+          >
+            Tallying nothing&hellip;
+          </div>
+        ) : isEmpty ? (
           /* ── Empty state ─────────────────────────────────────────────── */
           <div className="flex justify-center pt-6">
             <div className="theme-light w-full max-w-[460px]">

@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useCart } from "@/lib/store/cart";
+import { useCartReady } from "@/lib/store/useCartReady";
 import { Input } from "@/components/ui/Input";
 import { ThemeToggle } from "@/components/ui/ThemeToggle";
 
@@ -23,7 +24,10 @@ interface SiteHeaderProps {
  */
 export function SiteHeader({ search, onSearch }: SiteHeaderProps) {
   // Selector returns the count number directly; re-renders only when count changes.
-  const count = useCart((s) => s.count());
+  // Show 0 until the persisted cart has rehydrated, so the first client render
+  // matches the (empty) server render and React doesn't flag a hydration mismatch.
+  const ready = useCartReady();
+  const count = useCart((s) => (ready ? s.count() : 0));
   const openDrawer = useCart((s) => s.openDrawer);
 
   return (
