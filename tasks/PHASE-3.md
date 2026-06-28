@@ -38,12 +38,13 @@ Plan: `~/.claude/plans/synchronous-sprouting-yao.md`.
 - [x] Reduced-motion (CSS keyframes degrade) + keyboard (native buttons + focus ring)
 - [x] `pnpm verify` green + `pnpm build` (ISR confirmed) + SSR content test (12 real products, hero, $0.00, chips, 0 errors). ⚠️ Interactive browser pass blocked by env chrome-blocker hook — needs manual/web-tester eyeball.
 
-## Slice 4 — /product/[id] + minimal cart store
-- [ ] `lib/store/cart.ts` (minimal: lines/addLine/count — full cart is Phase 4)
-- [ ] `app/product/[id]/page.tsx` (detail: gallery, info, data-driven options, reviews)
-- [ ] `components/catalog/AddToCart.tsx` wires Stepper+button → store; header count reflects it
-- [ ] Reduced-motion + keyboard verified
-- [ ] `pnpm verify` green + browser test (add-to-cart increments count)
+## Slice 4 — /product/[id] + minimal cart store  ✅
+- [x] `lib/store/cart.ts` (minimal: lines/addLine/count — full cart is Phase 4) [done in S3]
+- [x] `app/product/[id]/page.tsx` (gallery, info, data-driven options, reviews, uuid-guard → 404)
+- [x] `lib/catalog/options.ts` safe jsonb parser + `tests/unit/options.test.ts` (3 tests)
+- [x] `components/catalog/AddToCart.tsx` wires options + Stepper + button → `useCart().addLine`; header count reflects it
+- [x] Reduced-motion (no animations added) + keyboard (native buttons, aria-pressed/checkbox) 
+- [x] `pnpm verify` green (15 tests) + build + SSR content test (name/vendor/options/reviews/$0.00 + 404 guards + empty-state). ⚠️ Interactive add-to-cart click still needs manual/web-tester eyeball.
 
 ## Slice 5 — Polish + PR
 - [ ] Final a11y/motion pass; DoD confirmed
