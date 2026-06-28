@@ -1,0 +1,76 @@
+/* NeverComes — design-system tokens (adopted from Claude Design, Phase 3).
+   Semantic CSS variables: light ("paper") is the :root default; .theme-dark
+   ("carbon receipt") is the late-night default the app ships with.
+   Tailwind (tailwind.config.ts) maps utility color names onto these vars, so
+   every primitive themes automatically. Source of truth for *look*. */
+
+:root {
+  /* ---- Raw ramps (only what the UI references directly) ------------------ */
+  --carbon-900: #100d0a;
+  --carbon-800: #16120d;
+  --carbon-700: #1e1913;
+  --carbon-600: #2a2319;
+  --carbon-500: #3a3125;
+
+  /* ---- Semantic surfaces (light / receipt — default) -------------------- */
+  --surface-page: #fbf7ee;
+  --surface-card: #f5efe2;
+  --surface-sunken: #ece3d1;
+  --surface-raised: #ffffff;
+
+  /* ---- Text ------------------------------------------------------------- */
+  --text-strong: #1a1612;
+  --text-body: #2a241d;
+  --text-muted: #6f6557;
+  --text-faint: #938876;
+  --text-inverse: #fbf7ee;
+  --text-accent: #b4392c;
+
+  /* ---- Borders ---------------------------------------------------------- */
+  --border-hairline: #ddd1ba;
+  --border-strong: #1a1612;
+
+  /* ---- Accent (stamp red — the one loud color) -------------------------- */
+  --accent: #b4392c;
+  --accent-hover: #8e2a21;
+  --accent-wash: #f3d9d4;
+  --accent-contrast: #fbf7ee;
+
+  /* ---- Status ----------------------------------------------------------- */
+  --status-transit: #b07d2a;
+  --status-transit-wash: #f0e3c6;
+
+  /* ---- Scrim for overlays (Sheet) — alpha can't ride a var() color in TW */
+  --overlay: rgba(26, 22, 18, 0.4);
+
+  /* ---- Font families (next/font sets --font-display / --font-mono) ------- */
+  --font-text: var(--font-display);
+}
+
+/* ===== DARK / NIGHT (carbon receipt) — the shipped default ================ */
+.theme-dark {
+  --surface-page: var(--carbon-900);
+  --surface-card: var(--carbon-700);
+  --surface-sunken: var(--carbon-800);
+  --surface-raised: var(--carbon-600);
+
+  --text-strong: #f3ecdd;
+  --text-body: #e4dac6;
+  --text-muted: #a99c84;
+  --text-faint: #786c58;
+  --text-inverse: var(--carbon-900);
+  --text-accent: #d9695e;
+
+  --border-hairline: var(--carbon-500);
+  --border-strong: #e4dac6;
+
+  --accent: #c8463a;
+  --accent-hover: #d9695e;
+  --accent-wash: #2a1a16;
+  --accent-contrast: #fbf7ee;
+
+  --status-transit: #d29b46;
+  --status-transit-wash: #2c2414;
+
+  --overlay: rgba(0, 0, 0, 0.6);
+}

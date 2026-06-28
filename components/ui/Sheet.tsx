@@ -63,7 +63,7 @@ export function Sheet({
       <div
         onClick={() => onOpenChange(false)}
         className={cn(
-          "absolute inset-0 bg-ink/40 transition-opacity duration-200",
+          "absolute inset-0 bg-overlay transition-opacity duration-200",
           open ? "opacity-100" : "opacity-0",
         )}
       />
@@ -76,7 +76,7 @@ export function Sheet({
         aria-label={ariaLabel}
         tabIndex={-1}
         className={cn(
-          "absolute top-0 h-full w-full max-w-sm bg-paper p-6 shadow-xl outline-none",
+          "absolute top-0 h-full w-full max-w-sm bg-card p-6 shadow-xl outline-none",
           "transition-transform duration-200 ease-out",
           side === "right" ? "right-0" : "left-0",
           open

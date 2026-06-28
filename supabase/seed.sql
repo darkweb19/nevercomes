@@ -84,4 +84,30 @@ insert into regions (id, postal_prefix, centroid_lat, centroid_lng, city_centroi
   ('00000000-0000-0000-0000-0000000000f1', 'M5V', 43.6426, -79.3871, 43.6532, -79.3832, true, false),
   ('00000000-0000-0000-0000-0000000000f2', 'V6B', 49.2797, -123.1207, 49.2827, -123.1207, true, false);
 
+-- ---------------------------------------------------------------------------
+-- Product options (a few, so the detail page's option UI is demonstrable).
+-- Shape: array of groups { name, kind: "single"|"multi", choices: [{label, note?}] }.
+-- "+$0.00" / "Sold out" notes keep the parody intact. Most products stay [].
+-- ---------------------------------------------------------------------------
+update products set options = '[
+  {"name":"Doneness","kind":"single","choices":[{"label":"Rare","note":"You will wait either way"},{"label":"Medium"},{"label":"Well done"}]},
+  {"name":"Add-ons","kind":"multi","choices":[{"label":"Extra patty","note":"+$0.00"},{"label":"Smoked cheddar","note":"+$0.00"},{"label":"Maple bacon","note":"+$0.00"},{"label":"Anticipation","note":"Sold out"}]}
+]'::jsonb where id = '00000000-0000-0000-0000-0000000000d2';
+
+update products set options = '[
+  {"name":"Broth","kind":"single","choices":[{"label":"Tonkotsu"},{"label":"Miso"},{"label":"Shoyu"}]},
+  {"name":"Spice","kind":"single","choices":[{"label":"Mild"},{"label":"Medium"},{"label":"Volcanic","note":"Still won''t arrive"}]},
+  {"name":"Add-ons","kind":"multi","choices":[{"label":"Soft egg","note":"+$0.00"},{"label":"Extra chashu","note":"+$0.00"},{"label":"Sweet corn","note":"+$0.00"}]}
+]'::jsonb where id = '00000000-0000-0000-0000-0000000000d3';
+
+update products set options = '[
+  {"name":"Size","kind":"single","choices":[{"label":"S"},{"label":"M"},{"label":"L"},{"label":"XL"}]},
+  {"name":"Color","kind":"single","choices":[{"label":"Carbon"},{"label":"Oat"},{"label":"Stamp Red"}]}
+]'::jsonb where id = '00000000-0000-0000-0000-0000000000e5';
+
+update products set options = '[
+  {"name":"Color","kind":"single","choices":[{"label":"Carbon"},{"label":"Bone"}]},
+  {"name":"Add-ons","kind":"multi","choices":[{"label":"Extended never-warranty","note":"+$0.00"}]}
+]'::jsonb where id = '00000000-0000-0000-0000-0000000000dd';
+
 commit;

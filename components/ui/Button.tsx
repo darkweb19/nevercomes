@@ -1,29 +1,37 @@
 import { forwardRef } from "react";
 import { cn } from "@/lib/utils/cn";
 
-type ButtonVariant = "primary" | "ghost";
-type ButtonSize = "sm" | "md";
+type ButtonVariant = "primary" | "secondary" | "ghost";
+type ButtonSize = "sm" | "md" | "lg";
 
 export interface ButtonProps
   extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   variant?: ButtonVariant;
   size?: ButtonSize;
+  /** Stretch to fill the container width. */
+  block?: boolean;
 }
 
 const variants: Record<ButtonVariant, string> = {
-  // The one bold accent: stamp-red CTA on paper.
-  primary: "bg-stamp text-paper hover:bg-stamp/90 border border-stamp",
-  // Quiet: ink on paper with a perforation-toned border.
-  ghost: "bg-transparent text-ink border border-rule hover:bg-paper-2",
+  // The one bold accent: stamp-red CTA.
+  primary: "bg-accent text-accent-contrast hover:bg-accent-hover border border-accent",
+  // Bordered surface — quiet but present (filters, secondary actions).
+  secondary: "bg-card text-fg-strong border border-hairline hover:bg-sunken",
+  // Quietest: transparent with a perforation-toned border.
+  ghost: "bg-transparent text-fg-strong border border-hairline hover:bg-sunken",
 };
 
 const sizes: Record<ButtonSize, string> = {
-  sm: "h-8 px-3 text-label",
-  md: "h-10 px-4 text-body",
+  sm: "h-8 px-3 text-sm",
+  md: "h-10 px-4 text-base",
+  lg: "h-14 px-6 text-base",
 };
 
 export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
-  ({ className, variant = "primary", size = "md", type, ...props }, ref) => (
+  (
+    { className, variant = "primary", size = "md", block = false, type, ...props },
+    ref,
+  ) => (
     <button
       ref={ref}
       type={type ?? "button"}
@@ -32,6 +40,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
         "disabled:pointer-events-none disabled:opacity-50",
         variants[variant],
         sizes[size],
+        block && "w-full",
         className,
       )}
       {...props}

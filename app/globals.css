@@ -1,17 +1,19 @@
+@import "./tokens.css";
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 @layer base {
   body {
-    @apply bg-paper text-ink font-sans;
+    @apply bg-page text-fg font-sans;
     text-rendering: optimizeLegibility;
     -webkit-font-smoothing: antialiased;
   }
 
   /* Visible keyboard focus everywhere (a11y) — the one bold accent, used sparingly. */
   :focus-visible {
-    outline: 2px solid theme("colors.stamp");
+    outline: 2px solid var(--accent);
     outline-offset: 2px;
   }
 
@@ -30,9 +32,30 @@
 }
 
 @layer components {
-  /* Perforation / route motif: a 1px dashed tear-edge in --rule.
+  /* Perforation / route motif: a 1px dashed tear-edge in the hairline token.
      Reused by Card's top edge, dividers, and (later) the courier route line. */
   .perforation {
-    border-top: 1px dashed theme("colors.rule");
+    border-top: 1px dashed var(--border-hairline);
+  }
+}
+
+/* ── Catalog motion ─────────────────────────────────────────────────────── */
+/* Spinner used on the infinite-scroll footer and the filter-reset loading
+   state. CSS animation → degrades automatically under prefers-reduced-motion
+   (globals sets animation-duration: 0.01ms + iteration-count: 1). */
+@keyframes ncspin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Shimmer for skeleton cards in the loading.tsx screen.
+   Sweeps a highlight across a dark-carbon gradient left→right. */
+@keyframes ncshimmer {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
   }
 }

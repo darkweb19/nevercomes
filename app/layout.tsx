@@ -22,14 +22,24 @@ export const metadata: Metadata = {
   description: "All the dopamine of buying, none of the receipt.",
 };
 
+// Set the theme class before first paint to avoid a flash. Dark ("carbon") is the
+// shipped default; a stored preference (nc-theme) overrides it. Kept inline + tiny.
+const noFlashTheme = `(function(){try{var t=localStorage.getItem('nc-theme');var d=t?t==='dark':true;var c=document.documentElement.classList;d?c.add('theme-dark'):c.remove('theme-dark');}catch(e){}})();`;
+
 export default function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={`${display.variable} ${mono.variable}`}>
-      <body className="bg-paper text-ink font-sans">{children}</body>
+    <html
+      lang="en"
+      className={`theme-dark ${display.variable} ${mono.variable}`}
+    >
+      <head>
+        <script dangerouslySetInnerHTML={{ __html: noFlashTheme }} />
+      </head>
+      <body className="bg-page text-fg font-sans">{children}</body>
     </html>
   );
 }
