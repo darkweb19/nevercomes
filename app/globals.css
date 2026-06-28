@@ -86,3 +86,18 @@
     background-position: -200% 0;
   }
 }
+
+/* The "Processing $0.00… forever" checkout dots (Phase 4 cart drawer + page).
+   Three staggered spans fade in sequence. CSS animation → degrades automatically
+   under prefers-reduced-motion (globals collapses duration + iteration-count). */
+@keyframes ncDots {
+  0% {
+    opacity: 0.2;
+  }
+  20% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0.2;
+  }
+}

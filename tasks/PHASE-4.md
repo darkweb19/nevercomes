@@ -56,16 +56,17 @@ matches the design. `npm run verify` green per slice. Full-loop e2e stays Phase 
       caller in `app/product/[id]/page.tsx` updated.
 - [x] `npm run verify` green (33 tests).
 
-## Slice 3 — CartDrawer (on `Sheet`) + header wiring
-- [ ] `components/cart/CartDrawer.tsx`: `<Sheet>` with header (count badge), scrollable line list
+## Slice 3 — CartDrawer (on `Sheet`) + header wiring  ✅
+- [x] `components/cart/CartDrawer.tsx`: `<Sheet>` with header (count pill), scrollable line list
       (compact: sku chip, name, note, $0.00 + ghost strike, `<Stepper>`, remove), soft-cap notice,
       footer (promo Input + Apply, subtotal $0.00 + ghost, "fees & taxes at the receipt",
-      Checkout · $0.00, "View full receipt" → `/cart`). Empty state ("Nothing in the cart").
-- [ ] Mount `<CartDrawer>` once globally via a client wrapper in `app/layout.tsx` so any page's
-      header opens it.
-- [ ] `components/catalog/SiteHeader.tsx`: wire the cart button → `openDrawer()`.
-- [ ] Reduced-motion + keyboard inherited from `Sheet`; verify focus + Esc.
-- [ ] `npm run verify` green.
+      Checkout · $0.00 → forever-spinner dots, "View full receipt" → `/cart`). Empty state.
+- [x] Mount `<CartDrawer>` directly in `app/layout.tsx` (client component into server layout) so
+      any page's header opens it. Build confirms pages stay static.
+- [x] `components/catalog/SiteHeader.tsx`: cart button → `openDrawer()`.
+- [x] Reduced-motion (Sheet slide + `ncDots` degrade via global reset) + keyboard/focus/Esc from Sheet.
+- [x] `npm run verify` green (33 tests) + `npm run build` clean.
+      ⚠️ Interactive click-through not browser-tested (env blocks automation); verified via verify+build+code.
 
 ## Slice 4 — /cart receipt page
 - [ ] `app/cart/page.tsx` (client; cart is client-only). SiteHeader + page header (eyebrow/title/

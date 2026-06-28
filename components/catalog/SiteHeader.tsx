@@ -24,6 +24,7 @@ interface SiteHeaderProps {
 export function SiteHeader({ search, onSearch }: SiteHeaderProps) {
   // Selector returns the count number directly; re-renders only when count changes.
   const count = useCart((s) => s.count());
+  const openDrawer = useCart((s) => s.openDrawer);
 
   return (
     <header className="sticky top-0 z-40 border-b border-hairline bg-page">
@@ -73,6 +74,7 @@ export function SiteHeader({ search, onSearch }: SiteHeaderProps) {
           {/* Cart button */}
           <button
             type="button"
+            onClick={openDrawer}
             className="flex h-9 items-center gap-2 rounded-md border border-hairline bg-card px-3 font-mono text-xs uppercase tracking-label text-fg-strong transition-colors hover:bg-sunken"
             aria-label={`Cart, ${count} item${count !== 1 ? "s" : ""}`}
           >

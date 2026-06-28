@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Bricolage_Grotesque, Space_Mono } from "next/font/google";
 import "./globals.css";
+import { CartDrawer } from "@/components/cart/CartDrawer";
 
 // Display (headlines, the stamp, and — per D4 — body copy).
 const display = Bricolage_Grotesque({
@@ -39,7 +40,11 @@ export default function RootLayout({
       <head>
         <script dangerouslySetInnerHTML={{ __html: noFlashTheme }} />
       </head>
-      <body className="bg-page text-fg font-sans">{children}</body>
+      <body className="bg-page text-fg font-sans">
+        {children}
+        {/* Mounted once so any page's header can open the cart drawer. */}
+        <CartDrawer />
+      </body>
     </html>
   );
 }
