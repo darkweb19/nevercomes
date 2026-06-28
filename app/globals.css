@@ -38,3 +38,24 @@
     border-top: 1px dashed var(--border-hairline);
   }
 }
+
+/* ── Catalog motion ─────────────────────────────────────────────────────── */
+/* Spinner used on the infinite-scroll footer and the filter-reset loading
+   state. CSS animation → degrades automatically under prefers-reduced-motion
+   (globals sets animation-duration: 0.01ms + iteration-count: 1). */
+@keyframes ncspin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Shimmer for skeleton cards in the loading.tsx screen.
+   Sweeps a highlight across a dark-carbon gradient left→right. */
+@keyframes ncshimmer {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
