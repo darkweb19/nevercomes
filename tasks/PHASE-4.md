@@ -41,18 +41,20 @@ matches the design. `npm run verify` green per slice. Full-loop e2e stays Phase 
 - [x] `app/globals.css`: add `.nc-tear-top` / `.nc-tear-bottom` torn-edge utilities (mask, `--nc-tear-bg`).
 - [x] Add swatches + tear demo to `/scratch`; `npm run verify` green (15 tests).
 
-## Slice 2 — Cart store buildout + pure totals (test-alongside)
-- [ ] `lib/cart/totals.ts` (pure, integer cents): `subtotalCents`, `deliveryCents`, `serviceCents`,
+## Slice 2 — Cart store buildout + pure totals (test-alongside)  ✅
+- [x] `lib/cart/totals.ts` (pure, integer cents): `subtotalCents`, `deliveryCents`, `serviceCents`,
       `taxCents`, `ghostTotalCents`, `count` from lines. `realTotalCents` ≡ 0.
-- [ ] `tests/unit/cart-totals.test.ts`: math + rounding in cents; empty cart = all 0; realTotal 0.
-- [ ] `lib/store/cart.ts`: extend `CartLine` (snapshot fields + stable `lineId`); add `persist`
-      middleware (localStorage key `nc-cart`, versioned); actions `setQty` (clamp to soft cap →
-      sets `capHit`), `removeLine`, `clear`, merge-on-add (same productId+options), `applyPromo`/
-      `promo`/`promoApplied`, and drawer `open`/`openDrawer`/`closeDrawer`. Keep `count()`.
-- [ ] `tests/unit/cart-store.test.ts`: add→merge, setQty cap + capHit, remove, clear, promo,
-      persisted-shape serialization (reset via `clear()` in `beforeEach`).
-- [ ] `components/catalog/AddToCart.tsx`: pass the price snapshot into `addLine`.
-- [ ] `npm run verify` green.
+- [x] `tests/unit/cart-totals.test.ts`: math + rounding in cents; empty cart = all 0; realTotal 0.
+- [x] `lib/store/cart.ts`: extended `CartLine` (snapshot fields + stable `lineId`); `persist`
+      middleware (localStorage key `nc-cart`, versioned, SSR-safe memory fallback); actions `setQty`
+      (clamp to soft cap → sets `capHit`), `removeLine`, `clear`, merge-on-add (same productId+
+      options, order-independent), `applyPromo`/`setPromo`/`promo`/`promoApplied`, drawer `open`/
+      `openDrawer`/`closeDrawer`. Kept `count()`.
+- [x] `tests/unit/cart-store.test.ts`: add→merge, distinct options, setQty cap + capHit clear,
+      setQty 0 removes, removeLine, clear, promo, count() (reset via `setState` in `beforeEach`).
+- [x] `components/catalog/AddToCart.tsx`: passes name/priceCents/note snapshot into `addLine`;
+      caller in `app/product/[id]/page.tsx` updated.
+- [x] `npm run verify` green (33 tests).
 
 ## Slice 3 — CartDrawer (on `Sheet`) + header wiring
 - [ ] `components/cart/CartDrawer.tsx`: `<Sheet>` with header (count badge), scrollable line list

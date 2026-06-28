@@ -10,6 +10,12 @@ import type { OptionGroup } from "@/lib/catalog/options";
 
 interface AddToCartProps {
   productId: string;
+  /** Product name, snapshotted onto the cart line for the receipt. */
+  name: string;
+  /** Real `price_cents` (never the $0.00 gag) — snapshotted onto the line. */
+  priceCents: number;
+  /** Short descriptor for the receipt line (e.g. the vendor). */
+  note?: string;
   options: OptionGroup[];
 }
 
@@ -20,7 +26,13 @@ const SOLD_OUT = "Sold out";
  * Selection state lives here; on add it pushes a line into the (minimal,
  * Phase-3) cart store and shows the deadpan confirmation.
  */
-export function AddToCart({ productId, options }: AddToCartProps) {
+export function AddToCart({
+  productId,
+  name,
+  priceCents,
+  note,
+  options,
+}: AddToCartProps) {
   const addLine = useCart((s) => s.addLine);
 
   const [selection, setSelection] = useState<Record<string, string | string[]>>(
@@ -53,7 +65,7 @@ export function AddToCart({ productId, options }: AddToCartProps) {
   }
 
   function handleAdd() {
-    addLine({ productId, qty, options: selection });
+    addLine({ productId, name, priceCents, note, qty, options: selection });
     setAdded(true);
   }
 
