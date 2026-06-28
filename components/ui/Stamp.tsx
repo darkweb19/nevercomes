@@ -22,8 +22,8 @@ export function Stamp({
       role="img"
       aria-label={label}
       className={cn(
-        "inline-block -rotate-6 select-none rounded-sm border-2 border-stamp px-3 py-1",
-        "font-display text-lg font-bold uppercase tracking-widest text-stamp opacity-80",
+        "inline-block -rotate-6 select-none rounded-sm border-2 border-accent px-3 py-1",
+        "font-display text-lg font-bold uppercase tracking-widest text-accent opacity-80",
         className,
       )}
       {...props}

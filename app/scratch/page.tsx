@@ -1,29 +1,41 @@
 "use client";
 
 import { useState } from "react";
-import { Badge, Button, Card, Input, Sheet, Stamp } from "@/components/ui";
+import {
+  Badge,
+  Button,
+  Card,
+  Input,
+  Sheet,
+  Stamp,
+  ThemeToggle,
+} from "@/components/ui";
 
-// Phase 1 visual-review surface (D3: /scratch, since Next treats /_scratch as private).
-// Not a product screen — exists only to eyeball tokens + primitives. Safe to delete later.
+// Visual-review surface (D3: /scratch, since Next treats /_scratch as private).
+// Not a product screen — exists only to eyeball tokens + primitives in both
+// themes. Safe to delete later.
 
 const typeScale = [
-  { name: "h1 / 56", className: "text-h1" },
-  { name: "h2 / 40", className: "text-h2" },
-  { name: "h3 / 28", className: "text-h3" },
+  { name: "5xl / 62", className: "text-5xl" },
+  { name: "4xl / 48", className: "text-4xl" },
+  { name: "3xl / 38", className: "text-3xl" },
+  { name: "2xl / 30", className: "text-2xl" },
+  { name: "xl / 24", className: "text-xl" },
   { name: "lg / 20", className: "text-lg" },
-  { name: "body / 16", className: "text-body" },
-  { name: "label / 14", className: "text-label" },
-  { name: "micro / 12", className: "text-micro" },
+  { name: "base / 15", className: "text-base" },
+  { name: "sm / 13", className: "text-sm" },
+  { name: "xs / 12", className: "text-xs" },
 ];
 
 const swatches = [
-  { name: "paper", className: "bg-paper" },
-  { name: "paper-2", className: "bg-paper-2" },
-  { name: "ink", className: "bg-ink" },
-  { name: "ink-faded", className: "bg-ink-faded" },
-  { name: "stamp", className: "bg-stamp" },
-  { name: "ok", className: "bg-ok" },
-  { name: "warn", className: "bg-warn" },
+  { name: "page", className: "bg-page" },
+  { name: "card", className: "bg-card" },
+  { name: "sunken", className: "bg-sunken" },
+  { name: "raised", className: "bg-raised" },
+  { name: "accent", className: "bg-accent" },
+  { name: "accent-wash", className: "bg-accent-wash" },
+  { name: "status-transit", className: "bg-status-transit" },
+  { name: "carbon-700", className: "bg-carbon-700" },
 ];
 
 function Section({
@@ -35,7 +47,7 @@ function Section({
 }) {
   return (
     <section className="space-y-4">
-      <h2 className="font-mono text-label uppercase tracking-widest text-ink-faded">
+      <h2 className="font-mono text-sm uppercase tracking-label text-fg-faint">
         {title}
       </h2>
       {children}
@@ -48,19 +60,23 @@ export default function ScratchPage() {
 
   return (
     <main className="mx-auto max-w-4xl space-y-12 p-8">
-      <header className="space-y-2">
-        <Stamp />
-        <h1 className="text-h2 font-display">Design system scratch</h1>
-        <p className="font-mono text-label text-ink-faded">
-          Phase 1 — tokens &amp; primitives. Eyeball only.
-        </p>
+      <header className="flex items-start justify-between gap-4">
+        <div className="space-y-2">
+          <Stamp />
+          <h1 className="text-4xl font-display">Design system scratch</h1>
+          <p className="font-mono text-sm text-fg-faint">
+            Phase 3 — adopted design-system tokens. Toggle the theme to eyeball
+            both.
+          </p>
+        </div>
+        <ThemeToggle />
       </header>
 
       <Section title="Type scale">
         <div className="space-y-2">
           {typeScale.map((t) => (
             <div key={t.name} className="flex items-baseline gap-4">
-              <span className="w-24 shrink-0 font-mono text-micro text-ink-faded">
+              <span className="w-24 shrink-0 font-mono text-xs text-fg-faint">
                 {t.name}
               </span>
               <span className={`font-display ${t.className}`}>
@@ -76,11 +92,9 @@ export default function ScratchPage() {
           {swatches.map((s) => (
             <div key={s.name} className="space-y-1">
               <div
-                className={`h-16 w-24 rounded-md border border-rule ${s.className}`}
+                className={`h-16 w-24 rounded-md border border-hairline ${s.className}`}
               />
-              <span className="font-mono text-micro text-ink-faded">
-                {s.name}
-              </span>
+              <span className="font-mono text-xs text-fg-faint">{s.name}</span>
             </div>
           ))}
         </div>
@@ -110,8 +124,10 @@ export default function ScratchPage() {
 
       <Section title="Card">
         <Card className="max-w-sm space-y-2">
-          <h3 className="font-display text-lg">Order #NC-000000</h3>
-          <p className="font-mono text-label text-ink-faded">
+          <h3 className="font-display text-lg text-fg-strong">
+            Order #NC-000000
+          </h3>
+          <p className="font-mono text-sm text-fg-faint">
             Status: in transit · ETA: —
           </p>
         </Card>
@@ -136,8 +152,8 @@ export default function ScratchPage() {
           aria-label="Example cart drawer"
         >
           <div className="space-y-4">
-            <h3 className="font-display text-h3">Your cart</h3>
-            <p className="font-mono text-label text-ink-faded">
+            <h3 className="font-display text-2xl text-fg-strong">Your cart</h3>
+            <p className="font-mono text-sm text-fg-faint">
               Nothing ships from here. Press Esc to close.
             </p>
             <Button onClick={() => setSheetOpen(false)}>Close</Button>

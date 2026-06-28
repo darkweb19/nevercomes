@@ -11,7 +11,7 @@ export const Card = forwardRef<HTMLDivElement, CardProps>(
     <div
       ref={ref}
       className={cn(
-        "rounded-md bg-paper-2 p-4",
+        "rounded-md bg-card p-4",
         perforated && "perforation",
         className,
       )}
