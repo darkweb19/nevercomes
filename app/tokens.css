@@ -1,40 +1,68 @@
-/* NeverComes — design-system tokens (adopted from Claude Design, Phase 3).
-   Semantic CSS variables: light ("paper") is the :root default; .theme-dark
-   ("carbon receipt") is the late-night default the app ships with.
-   Tailwind (tailwind.config.ts) maps utility color names onto these vars, so
-   every primitive themes automatically. Source of truth for *look*. */
+/* NeverComes — design-system tokens (adopted from Claude Design, Phase 3–4).
+   Layer 1: raw ramps (ink / paper / stamp / carbon) — fixed reference values.
+   Layer 2: semantic vars that flip light ("paper") ↔ .theme-dark ("carbon").
+   The receipt surfaces (Phase 4 /cart) are intentionally fixed-LIGHT in both
+   themes, so they reference the raw paper/ink/stamp ramps directly — those ramps
+   do NOT flip. Only --border-perf flips. Tailwind maps utilities onto these. */
 
 :root {
-  /* ---- Raw ramps (only what the UI references directly) ------------------ */
+  /* ---- Raw ramp: INK (warm near-black) ---------------------------------- */
+  --ink-900: #1a1612;
+  --ink-800: #2a241d;
+  --ink-700: #3a332a;
+  --ink-600: #564d41;
+  --ink-500: #6f6557;
+  --ink-400: #938876;
+  --ink-300: #b6ab97;
+
+  /* ---- Raw ramp: PAPER (warm thermal receipt) --------------------------- */
+  --paper-000: #fbf7ee;
+  --paper-100: #f5efe2;
+  --paper-200: #ece3d1;
+  --paper-300: #ddd1ba;
+  --paper-400: #cabd9f;
+
+  /* ---- Raw ramp: CARBON (warm near-black, dark surfaces) ----------------- */
   --carbon-900: #100d0a;
   --carbon-800: #16120d;
   --carbon-700: #1e1913;
   --carbon-600: #2a2319;
   --carbon-500: #3a3125;
 
+  /* ---- Raw ramp: STAMP RED (the one loud color) ------------------------- */
+  --stamp-700: #8e2a21;
+  --stamp-600: #b4392c;
+  --stamp-500: #c8463a;
+  --stamp-400: #d9695e;
+  --stamp-100: #f3d9d4;
+
+  /* ---- Receipt support: faded "low toner" thermal print ----------------- */
+  --thermal-fade: #a89a82;
+
   /* ---- Semantic surfaces (light / receipt — default) -------------------- */
-  --surface-page: #fbf7ee;
-  --surface-card: #f5efe2;
-  --surface-sunken: #ece3d1;
+  --surface-page: var(--paper-000);
+  --surface-card: var(--paper-100);
+  --surface-sunken: var(--paper-200);
   --surface-raised: #ffffff;
 
   /* ---- Text ------------------------------------------------------------- */
-  --text-strong: #1a1612;
-  --text-body: #2a241d;
-  --text-muted: #6f6557;
-  --text-faint: #938876;
-  --text-inverse: #fbf7ee;
-  --text-accent: #b4392c;
+  --text-strong: var(--ink-900);
+  --text-body: var(--ink-800);
+  --text-muted: var(--ink-500);
+  --text-faint: var(--ink-400);
+  --text-inverse: var(--paper-000);
+  --text-accent: var(--stamp-600);
 
   /* ---- Borders ---------------------------------------------------------- */
-  --border-hairline: #ddd1ba;
-  --border-strong: #1a1612;
+  --border-hairline: var(--paper-300);
+  --border-strong: var(--ink-900);
+  --border-perf: var(--ink-400); /* dashed perforation / tear line on paper */
 
   /* ---- Accent (stamp red — the one loud color) -------------------------- */
-  --accent: #b4392c;
-  --accent-hover: #8e2a21;
-  --accent-wash: #f3d9d4;
-  --accent-contrast: #fbf7ee;
+  --accent: var(--stamp-600);
+  --accent-hover: var(--stamp-700);
+  --accent-wash: var(--stamp-100);
+  --accent-contrast: var(--paper-000);
 
   /* ---- Status ----------------------------------------------------------- */
   --status-transit: #b07d2a;
@@ -45,6 +73,37 @@
 
   /* ---- Font families (next/font sets --font-display / --font-mono) ------- */
   --font-text: var(--font-display);
+}
+
+/* ===== FORCE-LIGHT subtree (the /cart receipt) =========================== */
+/* The app ships dark (html.theme-dark), but the printed receipt is fixed-LIGHT
+   paper. Wrapping a subtree in .theme-light re-asserts the :root light semantics
+   so token-driven primitives (Stepper, Input, Button) render correctly on paper,
+   even inside the dark page. The mirror of the design's `class="theme-dark"`
+   force on the drawer. Reusable by the Phase-5 checkout receipt. */
+.theme-light {
+  --surface-page: var(--paper-000);
+  --surface-card: var(--paper-100);
+  --surface-sunken: var(--paper-200);
+  --surface-raised: #ffffff;
+
+  --text-strong: var(--ink-900);
+  --text-body: var(--ink-800);
+  --text-muted: var(--ink-500);
+  --text-faint: var(--ink-400);
+  --text-inverse: var(--paper-000);
+  --text-accent: var(--stamp-600);
+
+  --border-hairline: var(--paper-300);
+  --border-strong: var(--ink-900);
+  --border-perf: var(--ink-400);
+
+  --accent: var(--stamp-600);
+  --accent-hover: var(--stamp-700);
+  --accent-wash: var(--stamp-100);
+  --accent-contrast: var(--paper-000);
+
+  --overlay: rgba(26, 22, 18, 0.4);
 }
 
 /* ===== DARK / NIGHT (carbon receipt) — the shipped default ================ */
@@ -59,13 +118,14 @@
   --text-muted: #a99c84;
   --text-faint: #786c58;
   --text-inverse: var(--carbon-900);
-  --text-accent: #d9695e;
+  --text-accent: var(--stamp-400);
 
   --border-hairline: var(--carbon-500);
   --border-strong: #e4dac6;
+  --border-perf: #5a4f3d;
 
-  --accent: #c8463a;
-  --accent-hover: #d9695e;
+  --accent: var(--stamp-500);
+  --accent-hover: var(--stamp-400);
   --accent-wash: #2a1a16;
   --accent-contrast: #fbf7ee;
 

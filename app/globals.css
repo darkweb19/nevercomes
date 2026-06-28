@@ -37,6 +37,33 @@
   .perforation {
     border-top: 1px dashed var(--border-hairline);
   }
+
+  /* Torn thermal-receipt edges (Phase 4 /cart). A 14px scalloped mask punches
+     half-circles out of a paper-colored strip, so the receipt reads as physically
+     torn. Background is set via --nc-tear-bg (default paper-100) so the strip
+     matches whatever paper surface it caps. Place .nc-tear-top above the receipt
+     body and .nc-tear-bottom below it. */
+  .nc-tear-top,
+  .nc-tear-bottom {
+    height: 14px;
+    background: var(--nc-tear-bg, var(--paper-100));
+  }
+  .nc-tear-top {
+    -webkit-mask: radial-gradient(
+        circle at 7px 7px,
+        transparent 0 6px,
+        #000 7px
+      )
+      top left / 14px 14px repeat-x;
+    mask: radial-gradient(circle at 7px 7px, transparent 0 6px, #000 7px) top
+      left / 14px 14px repeat-x;
+  }
+  .nc-tear-bottom {
+    -webkit-mask: radial-gradient(circle at 7px 0, transparent 0 6px, #000 7px)
+      bottom left / 14px 14px repeat-x;
+    mask: radial-gradient(circle at 7px 0, transparent 0 6px, #000 7px) bottom
+      left / 14px 14px repeat-x;
+  }
 }
 
 /* ── Catalog motion ─────────────────────────────────────────────────────── */
@@ -57,5 +84,20 @@
   }
   100% {
     background-position: -200% 0;
+  }
+}
+
+/* The "Processing $0.00… forever" checkout dots (Phase 4 cart drawer + page).
+   Three staggered spans fade in sequence. CSS animation → degrades automatically
+   under prefers-reduced-motion (globals collapses duration + iteration-count). */
+@keyframes ncDots {
+  0% {
+    opacity: 0.2;
+  }
+  20% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0.2;
   }
 }

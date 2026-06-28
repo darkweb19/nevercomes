@@ -48,6 +48,32 @@ const config: Config = {
           600: "var(--carbon-600)",
           500: "var(--carbon-500)",
         },
+        // Raw receipt ramps — the /cart receipt is fixed-LIGHT in both themes and
+        // references these directly (they don't flip with .theme-dark).
+        paper: {
+          "000": "var(--paper-000)",
+          100: "var(--paper-100)",
+          200: "var(--paper-200)",
+          300: "var(--paper-300)",
+          400: "var(--paper-400)",
+        },
+        ink: {
+          900: "var(--ink-900)",
+          800: "var(--ink-800)",
+          700: "var(--ink-700)",
+          600: "var(--ink-600)",
+          500: "var(--ink-500)",
+          400: "var(--ink-400)",
+          300: "var(--ink-300)",
+        },
+        stamp: {
+          700: "var(--stamp-700)",
+          600: "var(--stamp-600)",
+          500: "var(--stamp-500)",
+          400: "var(--stamp-400)",
+          100: "var(--stamp-100)",
+        },
+        thermal: "var(--thermal-fade)",
         ok: "#2f7d55",
         warn: "var(--status-transit)",
       },

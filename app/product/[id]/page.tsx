@@ -188,7 +188,13 @@ export default async function ProductPage({
 
             <div className="perforation mt-6" aria-hidden="true" />
 
-            <AddToCart productId={product.id} options={options} />
+            <AddToCart
+              productId={product.id}
+              name={product.name}
+              priceCents={product.price_cents}
+              note={product.vendor?.name ?? undefined}
+              options={options}
+            />
           </div>
         </div>
 

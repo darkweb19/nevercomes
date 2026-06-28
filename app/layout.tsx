@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Bricolage_Grotesque, Space_Mono } from "next/font/google";
 import "./globals.css";
+import { CartDrawer } from "@/components/cart/CartDrawer";
 
 // Display (headlines, the stamp, and — per D4 — body copy).
 const display = Bricolage_Grotesque({
@@ -35,11 +36,19 @@ export default function RootLayout({
     <html
       lang="en"
       className={`theme-dark ${display.variable} ${mono.variable}`}
+      // The noFlashTheme script below mutates <html>'s class from localStorage
+      // before React hydrates, so its class legitimately differs from this server
+      // render. Suppress the (expected) one-level attribute mismatch on <html> only.
+      suppressHydrationWarning
     >
       <head>
         <script dangerouslySetInnerHTML={{ __html: noFlashTheme }} />
       </head>
-      <body className="bg-page text-fg font-sans">{children}</body>
+      <body className="bg-page text-fg font-sans">
+        {children}
+        {/* Mounted once so any page's header can open the cart drawer. */}
+        <CartDrawer />
+      </body>
     </html>
   );
 }
