@@ -40,6 +40,41 @@ const swatches = [
   { name: "carbon-700", className: "bg-carbon-700" },
 ];
 
+// Raw receipt ramps (Phase 4) — fixed-light, do not flip with theme.
+const receiptRamps: { label: string; steps: { name: string; cls: string }[] }[] =
+  [
+    {
+      label: "paper",
+      steps: [
+        { name: "000", cls: "bg-paper-000" },
+        { name: "100", cls: "bg-paper-100" },
+        { name: "200", cls: "bg-paper-200" },
+        { name: "300", cls: "bg-paper-300" },
+        { name: "400", cls: "bg-paper-400" },
+      ],
+    },
+    {
+      label: "ink",
+      steps: [
+        { name: "900", cls: "bg-ink-900" },
+        { name: "700", cls: "bg-ink-700" },
+        { name: "500", cls: "bg-ink-500" },
+        { name: "400", cls: "bg-ink-400" },
+        { name: "300", cls: "bg-ink-300" },
+      ],
+    },
+    {
+      label: "stamp",
+      steps: [
+        { name: "700", cls: "bg-stamp-700" },
+        { name: "600", cls: "bg-stamp-600" },
+        { name: "500", cls: "bg-stamp-500" },
+        { name: "400", cls: "bg-stamp-400" },
+        { name: "100", cls: "bg-stamp-100" },
+      ],
+    },
+  ];
+
 function Section({
   title,
   children,
@@ -100,6 +135,45 @@ export default function ScratchPage() {
               <span className="font-mono text-xs text-fg-faint">{s.name}</span>
             </div>
           ))}
+        </div>
+      </Section>
+
+      <Section title="Receipt ramps (fixed-light)">
+        <div className="space-y-3">
+          {receiptRamps.map((ramp) => (
+            <div key={ramp.label} className="flex items-center gap-3">
+              <span className="w-12 shrink-0 font-mono text-xs text-fg-faint">
+                {ramp.label}
+              </span>
+              <div className="flex gap-1">
+                {ramp.steps.map((s) => (
+                  <div key={s.name} className="space-y-1">
+                    <div
+                      className={`h-12 w-12 rounded-sm border border-hairline ${s.cls}`}
+                    />
+                    <span className="block text-center font-mono text-2xs text-fg-faint">
+                      {s.name}
+                    </span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          ))}
+        </div>
+      </Section>
+
+      <Section title="Receipt tear edges">
+        <div className="max-w-sm">
+          <div className="nc-tear-top" />
+          <div className="bg-paper-100 px-6 py-5 text-center">
+            <span className="font-mono text-2xs uppercase tracking-label text-ink-500">
+              NEVERCOMES GENERAL STORE
+            </span>
+            <p className="mt-1 font-display text-md text-ink-900">
+              Torn on both ends.
+            </p>
+          </div>
+          <div className="nc-tear-bottom" />
         </div>
       </Section>
 
