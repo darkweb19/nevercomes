@@ -23,12 +23,12 @@ Plan: `~/.claude/plans/synchronous-sprouting-yao.md`.
 - [x] New `Stepper` (qty −/+, value/onChange, min 1, keyboard)
 - [x] Export from `index.ts`; add to `/scratch`; `pnpm verify` green
 
-## Slice 2 — Data layer + money util + seed options
-- [ ] `lib/utils/money.ts` `formatCents` + `tests/unit/money.test.ts`
-- [ ] `lib/catalog/filter.ts` (pure) + `tests/unit/filter.test.ts`
-- [ ] `lib/supabase/queries.ts`: `getCategories`, `getCatalogPage`, `getProductDetail`, `getReviewsByProduct`
-- [ ] Enrich a few `supabase/seed.sql` products with `options` jsonb; `pnpm db:reset`
-- [ ] `pnpm verify` green
+## Slice 2 — Data layer + money util + seed options  ✅
+- [x] `lib/utils/money.ts` `formatCents` + `tests/unit/money.test.ts`
+- [x] `lib/catalog/filter.ts` (pure: parseSort/sanitizeSearch/hasMore) + `tests/unit/filter.test.ts`
+- [x] `lib/supabase/queries.ts`: `getCategories`, `getCatalogPage` (count + stable id tiebreaker), `getProductDetail`, `getReviewsByProduct`
+- [x] Enrich 4 `supabase/seed.sql` products with `options` jsonb; `pnpm db:reset`
+- [x] `pnpm verify` green (12 tests) + verified joins/options/pagination against local DB
 
 ## Slice 3 — /browse (ISR + infinite scroll + filters + search)
 - [ ] `app/browse/page.tsx` (Server Component, `revalidate`) + `app/browse/loading.tsx` (skeleton)
