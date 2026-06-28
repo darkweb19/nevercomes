@@ -68,17 +68,20 @@ matches the design. `npm run verify` green per slice. Full-loop e2e stays Phase 
 - [x] `npm run verify` green (33 tests) + `npm run build` clean.
       ⚠️ Interactive click-through not browser-tested (env blocks automation); verified via verify+build+code.
 
-## Slice 4 — /cart receipt page
-- [ ] `app/cart/page.tsx` (client; cart is client-only). SiteHeader + page header (eyebrow/title/
+## Slice 4 — /cart receipt page  ✅
+- [x] `app/cart/page.tsx` (client; cart is client-only). SiteHeader + page header (eyebrow/title/
       blurb). **Receipt** (paper, tear edges): store header + order id + item count; line items
-      (image/sku tile, name, note, $0.00 + ghost line strike, `<Stepper>`, Remove); soft-cap notice;
+      (sku tile, name, note, $0.00 + ghost line strike, `<Stepper>`, Remove); soft-cap notice;
       fee rows (Subtotal / Delivery / Service / Tax — each $0.00 with ghost strike); Total $0.00 CAD
       + "WOULD'VE BEEN {ghost}"; "NO REFUND. NOTHING WAS CHARGED." **Sticky summary aside**
       (`<Card raised>`): order summary, promo Input + Apply ("Savings: $0.00. As designed."),
       Total $0.00, `<Button primary lg block>` Checkout · $0.00 → plays processing dots.
-- [ ] **Empty state**: perforated paper card, `<Stamp label="NEVER ADDED">`, "Browse anyway" → `/browse`.
-- [ ] Dots + any motion degrade under `prefers-reduced-motion`; keyboard pass.
-- [ ] `npm run verify` green + `npm run build` clean.
+- [x] **Empty state**: perforated paper card, `<Stamp label="Never added">`, "Browse anyway" → `/browse`.
+- [x] Added `.theme-light` token utility (mirror of the design's forced `theme-dark` on the drawer)
+      so token-driven primitives (Stepper/Input/Button) render LIGHT on the paper receipt inside the
+      dark app. Receipt subtree wrapped in `.theme-light`; summary aside stays dark.
+- [x] Dots degrade under `prefers-reduced-motion` (global reset); native buttons/links, keyboard via Stepper.
+- [x] `npm run verify` green (33 tests) + `npm run build` clean (/cart prerendered static, hydrates from localStorage).
 
 ## Slice 5 — Polish + review + PR
 - [ ] Final a11y/motion pass; fresh-context diff review (code-reviewer agent) vs. DoD.

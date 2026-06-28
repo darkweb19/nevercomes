@@ -75,6 +75,37 @@
   --font-text: var(--font-display);
 }
 
+/* ===== FORCE-LIGHT subtree (the /cart receipt) =========================== */
+/* The app ships dark (html.theme-dark), but the printed receipt is fixed-LIGHT
+   paper. Wrapping a subtree in .theme-light re-asserts the :root light semantics
+   so token-driven primitives (Stepper, Input, Button) render correctly on paper,
+   even inside the dark page. The mirror of the design's `class="theme-dark"`
+   force on the drawer. Reusable by the Phase-5 checkout receipt. */
+.theme-light {
+  --surface-page: var(--paper-000);
+  --surface-card: var(--paper-100);
+  --surface-sunken: var(--paper-200);
+  --surface-raised: #ffffff;
+
+  --text-strong: var(--ink-900);
+  --text-body: var(--ink-800);
+  --text-muted: var(--ink-500);
+  --text-faint: var(--ink-400);
+  --text-inverse: var(--paper-000);
+  --text-accent: var(--stamp-600);
+
+  --border-hairline: var(--paper-300);
+  --border-strong: var(--ink-900);
+  --border-perf: var(--ink-400);
+
+  --accent: var(--stamp-600);
+  --accent-hover: var(--stamp-700);
+  --accent-wash: var(--stamp-100);
+  --accent-contrast: var(--paper-000);
+
+  --overlay: rgba(26, 22, 18, 0.4);
+}
+
 /* ===== DARK / NIGHT (carbon receipt) — the shipped default ================ */
 .theme-dark {
   --surface-page: var(--carbon-900);
