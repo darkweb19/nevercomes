@@ -58,11 +58,11 @@ the engine has no clock and no persistence. Same inputs → identical frame.
 ## Slice 1 — tests FIRST  (write, watch them fail)
 Create the test files against the intended API before any implementation exists.
 
-- [ ] `tests/unit/sim-geo.test.ts`:
+- [x] `tests/unit/sim-geo.test.ts`:
   - `haversineMeters` on known coordinate pairs (± tolerance).
   - `interpolateAlongRoute(route, t)`: `t=0` → origin; `t=1` → final point; midpoint on a 2-point
     route lands halfway; clamps `t<0`/`t>1`; a 1-point route returns that point for any `t`.
-- [ ] `tests/unit/sim-step.test.ts` — the invariants that ARE the product:
+- [x] `tests/unit/sim-step.test.ts` — the invariants that ARE the product:
   - **Never-delivered (swept):** for `elapsedMs` across `[0 … 10 min]` in fine steps **and** huge
     values (`1e9`, `Number.MAX_SAFE_INTEGER`): `frame.status` is always one of the 5 known states,
     `frame.hasArrived === false`, `frame.progress < 1` (and `≤ PROGRESS_CAP`), and
@@ -78,20 +78,20 @@ Create the test files against the intended API before any implementation exists.
   - **Type sync:** compile-time assert `SimStatus` ≡ DB `order_status` (assignable both ways).
 
 ## Slice 2 — implement to pass  (pure engine)
-- [ ] `lib/sim/types.ts` — the types above.
-- [ ] `lib/sim/geo.ts` — pure `haversineMeters(a, b)` + `interpolateAlongRoute(route, t)` (walks
+- [x] `lib/sim/types.ts` — the types above.
+- [x] `lib/sim/geo.ts` — pure `haversineMeters(a, b)` + `interpolateAlongRoute(route, t)` (walks
       cumulative segment lengths; clamps `t`).
-- [ ] `lib/sim/step.ts` — stage table + `step(config, elapsedMs)`: clamp elapsed, pick stage,
+- [x] `lib/sim/step.ts` — stage table + `step(config, elapsedMs)`: clamp elapsed, pick stage,
       compute capped `progress`, interpolate `position`, derive `status`/`etaLabel`/`stamped`.
-- [ ] `lib/sim/index.ts` — barrel: re-export `step`, types, and constants. Remove `.gitkeep`.
-- [ ] Run tests green; keep any change to `lib/sim` and its tests in the same commit.
+- [x] `lib/sim/index.ts` — barrel: re-export `step`, types, and constants. Remove `.gitkeep`.
+- [x] Run tests green; keep any change to `lib/sim` and its tests in the same commit.
 
 ## Slice 3 — verify + purity gate + commit
-- [ ] `npm run verify` green (typecheck + lint + unit). **No e2e** — the tracker UI isn't wired yet
+- [x] `npm run verify` green (typecheck + lint + unit). **No e2e** — the tracker UI isn't wired yet
       (that's Phase 7); the core loop is unchanged.
-- [ ] Purity check: `grep -rE "react|next|supabase|fetch|document|window" lib/sim` returns nothing
+- [x] Purity check: `grep -rE "react|next|supabase|fetch|document|window" lib/sim` returns nothing
       (framework-free, HARD RULE #4).
-- [ ] Commit: `Phase 6: pure lib/sim engine (step) + never-delivered tests`.
+- [x] Commit: `Phase 6: pure lib/sim engine (step) + never-delivered tests`.
 
 ## Out of scope (Phase 7, not now)
 - Parsing `orders.route_polyline` jsonb → `LatLng[]` (Phase-7 glue).
