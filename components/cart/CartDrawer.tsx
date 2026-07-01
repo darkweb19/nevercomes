@@ -1,7 +1,7 @@
 "use client";
 
-import { useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { Sheet } from "@/components/ui/Sheet";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
@@ -18,8 +18,8 @@ import { formatCents } from "@/lib/utils/money";
  * page's header can open it via `useCart().openDrawer()`.
  *
  * Everything resolves to $0.00; the struck-through "ghost" figures are the
- * would-have-been amounts (lib/cart/totals). Checkout is the Phase-4 gag — it
- * never navigates (no /checkout until Phase 5), it just spins forever.
+ * would-have-been amounts (lib/cart/totals). Checkout closes the drawer and
+ * routes to /checkout, where the four-step flow owns the never-arrives gag.
  */
 export function CartDrawer() {
   const open = useCart((s) => s.open);
@@ -33,13 +33,15 @@ export function CartDrawer() {
   const setPromo = useCart((s) => s.setPromo);
   const applyPromo = useCart((s) => s.applyPromo);
 
-  const [checkingOut, setCheckingOut] = useState(false);
+  const router = useRouter();
 
   const totals = computeTotals(lines);
   const isEmpty = lines.length === 0;
 
-  // TODO Phase 5: route to /checkout instead of the perpetual spinner.
-  const onCheckout = () => setCheckingOut(true);
+  const onCheckout = () => {
+    closeDrawer();
+    router.push("/checkout");
+  };
 
   return (
     <Sheet
@@ -210,16 +212,6 @@ export function CartDrawer() {
           <p className="m-0 mb-4 font-mono text-[10px] uppercase tracking-wide text-fg-faint">
             Fees &amp; taxes calculated at the receipt. All $0.00.
           </p>
-
-          {checkingOut && (
-            <div className="mb-3 text-center font-mono text-[11px] text-fg-accent">
-              Processing $0.00
-              <span style={{ animation: "ncDots 1.4s infinite" }}>.</span>
-              <span style={{ animation: "ncDots 1.4s 0.2s infinite" }}>.</span>
-              <span style={{ animation: "ncDots 1.4s 0.4s infinite" }}>.</span>{" "}
-              this may take forever.
-            </div>
-          )}
 
           <div className="flex flex-col gap-2.5">
             <Button variant="primary" size="lg" block onClick={onCheckout}>
