@@ -101,3 +101,48 @@
     opacity: 0.2;
   }
 }
+
+/* ── Phase 5 checkout processing animations ─────────────────────────────── */
+/* Each degrades automatically under prefers-reduced-motion via the global rule
+   above (animation-duration: 0.01ms, iteration-count: 1 → instant final state). */
+
+/* Thermal receipt line fading in from just below its resting position. */
+@keyframes ncReceiptLine {
+  0% {
+    opacity: 0;
+    transform: translateY(5px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Rubber stamp slamming in with a bounce. Uses the same rotation as Stamp.tsx
+   (-6deg) so the final state matches the static Stamp component exactly. */
+@keyframes ncStampSlam {
+  0% {
+    opacity: 0;
+    transform: rotate(-6deg) scale(1.5);
+  }
+  65% {
+    opacity: 1;
+    transform: rotate(-6deg) scale(0.93);
+  }
+  82% {
+    transform: rotate(-6deg) scale(1.04);
+  }
+  100% {
+    transform: rotate(-6deg) scale(1);
+  }
+}
+
+/* Blinking cursor on the "Printing your receipt" line. */
+@keyframes ncCursorBlink {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0;
+  }
+}

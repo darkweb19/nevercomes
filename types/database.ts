@@ -471,7 +471,17 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      create_order: {
+        Args: {
+          p_dest_lat: number
+          p_dest_lng: number
+          p_fake_total_cents: number
+          p_items: Json
+          p_postal: string
+          p_region_id: string
+        }
+        Returns: string
+      }
     }
     Enums: {
       order_status: "accepted" | "preparing" | "picked_up" | "nearby" | "never"
