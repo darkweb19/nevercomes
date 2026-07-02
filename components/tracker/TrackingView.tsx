@@ -257,8 +257,12 @@ export function TrackingView({
       ? "Frozen two streets out. It was never going to arrive, so nothing moves."
       : "Two streets away and holding. The dot moves. The bag does not.";
 
-  // ETA hero. Key = the display string itself (per the design): consecutive
-  // identical labels ("2 min away" → "2 min away") don't re-trigger the flip.
+  // ETA hero. frame.etaLabel is intentionally bypassed here: the sim's label
+  // is the *state* authority ("~2 min away" | "Never"), but the design calls
+  // for a richer looping display cycle (D5) — so we key off isStamped (which
+  // follows frame.stamped) and run ETA_SEQUENCE for the theater in between.
+  // Key = the display string itself (per the design): consecutive identical
+  // labels ("2 min away" → "2 min away") don't re-trigger the flip.
   const etaValue = isStamped ? "Never" : etaAt(etaTick);
   const etaKey = etaValue;
   // "Live" labels ("… min away", "Almost there") glow transit-gold; stalls

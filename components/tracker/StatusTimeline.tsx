@@ -1,5 +1,3 @@
-"use client";
-
 /**
  * StatusTimeline — the 5-row courier progress list.
  *
