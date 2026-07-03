@@ -51,10 +51,14 @@ test("anonymous loop ends on a tracker that never completes", async ({ page }) =
   await expect(page).toHaveURL(/\/track\/[0-9a-f-]{36}/);
 
   // ── The tracker never completes ──────────────────────────────────────────
-  // The Delivered row exists but is eternally dashed ("—"): no delivered
-  // state, no arrival. This is the product; pin it.
-  await expect(page.getByText("Delivered")).toBeVisible();
-  await expect(page.getByText(/arrived at your door|delivered at/i)).toHaveCount(0);
+  // The Delivered row exists but its meta is the eternal dash ("—"): no
+  // timestamp, no arrival. This is the product; pin it structurally rather
+  // than by matching completion copy that could be reworded.
+  const deliveredLabel = page.getByText("Delivered", { exact: true });
+  await expect(deliveredLabel).toBeVisible();
+  await expect(
+    deliveredLabel.locator("xpath=following-sibling::div"),
+  ).toHaveText("—");
 });
 
 test("landing anchors and reduced-motion degrade", async ({ browser }) => {

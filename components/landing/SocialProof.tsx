@@ -97,9 +97,9 @@ export function SocialProof() {
 
         {/* Testimonials */}
         <div className="flex flex-wrap" style={{ gap: "clamp(16px, 2vw, 24px)" }}>
-          {testimonials.map((t, idx) => (
+          {testimonials.map((t) => (
             <div
-              key={idx}
+              key={t.author}
               className="flex-1 basis-80 min-w-64"
             >
               <Card raised className="flex h-full flex-col gap-4">
