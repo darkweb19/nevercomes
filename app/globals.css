@@ -66,6 +66,68 @@
   }
 }
 
+/* ── Phase 7 tracker motion ─────────────────────────────────────────────── */
+/* --ease-stamp: snappy overshoot for the NEVER ARRIVED stamp slam. */
+:root {
+  --ease-stamp: cubic-bezier(0.22, 1.1, 0.36, 1);
+}
+
+/*
+ * ETA hero flip: a small rise + fade-in applied to an INNER element so it
+ * doesn't fight the hero card's positioning. Triggered by React key change.
+ * The global reduced-motion rule above collapses animation-duration to 0.01ms
+ * so this resolves to the final state (opacity 1, translateY 0) instantly.
+ */
+@keyframes ncEtaFlip {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/*
+ * Stamp slam: NEVER ARRIVED slamming onto the panel.
+ * Scale/opacity ONLY — the tilt lives on the Stamp primitive's own rotate
+ * class, so it survives when this animation is disabled (reduced motion) and
+ * the wrapper carrying the animation never fights another transform.
+ * The global reduced-motion rule reduces duration to 0.01ms → instant settle.
+ */
+@keyframes ncStampWrap {
+  from {
+    opacity: 0;
+    transform: scale(1.8);
+  }
+  65% {
+    opacity: 1;
+    transform: scale(0.95);
+  }
+  82% {
+    transform: scale(1.02);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/*
+ * Pulse for the StatusPill transit dot. Opacity breathe.
+ * Degrades automatically: reduced-motion collapses iteration-count to 1,
+ * leaving the dot at full opacity (the safer visible state).
+ */
+@keyframes ncPulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.25;
+  }
+}
+
 /* ── Catalog motion ─────────────────────────────────────────────────────── */
 /* Spinner used on the infinite-scroll footer and the filter-reset loading
    state. CSS animation → degrades automatically under prefers-reduced-motion

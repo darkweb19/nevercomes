@@ -1,7 +1,7 @@
 import { forwardRef } from "react";
 import { cn } from "@/lib/utils/cn";
 
-type ButtonVariant = "primary" | "secondary" | "ghost";
+type ButtonVariant = "primary" | "secondary" | "ghost" | "danger";
 type ButtonSize = "sm" | "md" | "lg";
 
 export interface ButtonProps
@@ -19,6 +19,8 @@ const variants: Record<ButtonVariant, string> = {
   secondary: "bg-card text-fg-strong border border-hairline hover:bg-sunken",
   // Quietest: transparent with a perforation-toned border.
   ghost: "bg-transparent text-fg-strong border border-hairline hover:bg-sunken",
+  // Destructive / "declare it lost" — stamp-red fill, paper text.
+  danger: "bg-stamp-600 text-paper-000 hover:bg-stamp-700 border border-stamp-600",
 };
 
 const sizes: Record<ButtonSize, string> = {

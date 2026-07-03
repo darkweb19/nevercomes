@@ -7,3 +7,6 @@ export { Stamp, type StampProps } from "./Stamp";
 export { Eyebrow, type EyebrowProps } from "./Eyebrow";
 export { Stepper, type StepperProps } from "./Stepper";
 export { ThemeToggle } from "./ThemeToggle";
+export { IconButton, type IconButtonProps } from "./IconButton";
+export { StatusPill, type StatusPillProps, type StatusPillVariant } from "./StatusPill";
+export { Perforation, type PerforationProps, type PerforationVariant } from "./Perforation";

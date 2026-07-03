@@ -71,6 +71,11 @@
   /* ---- Scrim for overlays (Sheet) — alpha can't ride a var() color in TW */
   --overlay: rgba(26, 22, 18, 0.4);
 
+  /* ---- Animation timing (Phase 7 tracker) -------------------------------- */
+  --dur-base: 300ms;
+  --dur-slow: 600ms;
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+
   /* ---- Font families (next/font sets --font-display / --font-mono) ------- */
   --font-text: var(--font-display);
 }
