@@ -5,6 +5,12 @@
 @tailwind utilities;
 
 @layer base {
+  /* Landing anchor nav (#how/#idea/#proof) glides; the reduced-motion block
+     below resets it to auto. */
+  html {
+    scroll-behavior: smooth;
+  }
+
   body {
     @apply bg-page text-fg font-sans;
     text-rendering: optimizeLegibility;
