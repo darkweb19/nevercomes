@@ -1,6 +1,7 @@
 name: CI
 
-# The verify gate from rules/testing.md — typecheck + lint + unit on every PR and on main.
+# The verify gate from rules/testing.md — typecheck + lint + unit on every PR and on main,
+# plus the Playwright e2e of the full anonymous loop against a local Supabase stack.
 
 on:
   push:
@@ -20,3 +21,28 @@ jobs:
           cache: pnpm
       - run: pnpm install --frozen-lockfile
       - run: pnpm verify
+
+  e2e:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with: { version: 9 }
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - uses: supabase/setup-cli@v1
+        with: { version: latest }
+      - run: supabase start
+      # Local-stack keys only (the standard local anon JWT) — no prod secrets here.
+      - name: Point the app at the local stack
+        run: |
+          supabase status -o env \
+            | grep -E '^(API_URL|ANON_KEY)=' \
+            | sed -e 's/^API_URL=/NEXT_PUBLIC_SUPABASE_URL=/' \
+                  -e 's/^ANON_KEY=/NEXT_PUBLIC_SUPABASE_ANON_KEY=/' \
+            > .env.local
+      - run: pnpm exec playwright install --with-deps chromium
+      - run: pnpm test:e2e
