@@ -7,6 +7,7 @@
  *
  * Anonymous-first: no user or no orders → empty state, never a sign-in wall.
  */
+import type { ReactNode } from "react";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
@@ -17,6 +18,8 @@ import { Button } from "@/components/ui/Button";
 import { StatsCard } from "@/components/me/StatsCard";
 import { OrderHistoryList } from "@/components/me/OrderHistoryList";
 import { MilestonesRow } from "@/components/me/MilestonesRow";
+import { AccountStrip } from "@/components/me/AccountStrip";
+import { ClaimHistoryCard } from "@/components/me/ClaimHistoryCard";
 import { computeStats, deriveMilestones } from "@/lib/me/stats";
 import { SIM_DURATION_MS } from "@/lib/sim/constants";
 
@@ -37,6 +40,10 @@ export default async function MePage() {
     data: { user },
   } = await supabase.auth.getUser();
 
+  // Server-side hints for client components (avoid layout pop on first render).
+  const initialEmail = user?.email ?? null;
+  const initialIsAnonymous = user?.is_anonymous ?? false;
+
   if (!user) {
     return <EmptyState />;
   }
@@ -51,7 +58,21 @@ export default async function MePage() {
     .limit(50);
 
   if (!orders || orders.length === 0) {
-    return <EmptyState />;
+    return (
+      <EmptyState
+        accountStrip={
+          <AccountStrip
+            initialEmail={initialEmail}
+            initialIsAnonymous={initialIsAnonymous}
+          />
+        }
+        claimCard={
+          initialIsAnonymous ? (
+            <ClaimHistoryCard initialVisible />
+          ) : undefined
+        }
+      />
+    );
   }
 
   // Profile for streak start date; fall back to oldest order if missing.
@@ -102,15 +123,21 @@ export default async function MePage() {
     <div className="flex min-h-screen flex-col">
       <SiteHeader />
       <main className="mx-auto w-full max-w-[1400px] px-5 pb-16 pt-14 md:px-12">
-        {/* Page header */}
-        <div className="mb-11">
-          <Eyebrow rule>Your account</Eyebrow>
-          <h1 className="mt-3.5 font-display text-3xl font-extrabold tracking-tight text-fg-strong md:text-4xl lg:text-5xl">
-            /me
-          </h1>
-          <p className="mt-2.5 max-w-[52ch] text-base text-fg-muted md:text-md">
-            A running record of everything that almost happened.
-          </p>
+        {/* Page header — AccountStrip right-aligned */}
+        <div className="mb-11 flex items-start justify-between gap-4">
+          <div>
+            <Eyebrow rule>Your account</Eyebrow>
+            <h1 className="mt-3.5 font-display text-3xl font-extrabold tracking-tight text-fg-strong md:text-4xl lg:text-5xl">
+              /me
+            </h1>
+            <p className="mt-2.5 max-w-[52ch] text-base text-fg-muted md:text-md">
+              A running record of everything that almost happened.
+            </p>
+          </div>
+          <AccountStrip
+            initialEmail={initialEmail}
+            initialIsAnonymous={initialIsAnonymous}
+          />
         </div>
 
         {/* Stats */}
@@ -129,6 +156,13 @@ export default async function MePage() {
           </div>
         )}
 
+        {/* Claim history card — shown only while session is anonymous */}
+        {initialIsAnonymous && (
+          <div className="mt-11">
+            <ClaimHistoryCard initialVisible />
+          </div>
+        )}
+
         {/* Footer line */}
         <div className="mt-11 border-t border-hairline pt-6 text-center font-mono text-[11px] tracking-wide text-fg-faint">
           ALL THE DOPAMINE OF BUYING. NONE OF THE RECEIPT.
@@ -138,20 +172,38 @@ export default async function MePage() {
   );
 }
 
-/** Empty state — shown when there's no session or no orders. Never a sign-in wall. */
-function EmptyState() {
+// ---------------------------------------------------------------------------
+// Empty state
+// ---------------------------------------------------------------------------
+
+interface EmptyStateProps {
+  /** AccountStrip rendered right-aligned in the page-header block. */
+  accountStrip?: ReactNode;
+  /** ClaimHistoryCard rendered after the empty-state card. */
+  claimCard?: ReactNode;
+}
+
+/**
+ * Empty state — shown when there's no session or no orders. Never a sign-in
+ * wall. Accepts optional slots so anonymous users with no orders can still
+ * claim their history.
+ */
+function EmptyState({ accountStrip, claimCard }: EmptyStateProps = {}) {
   return (
     <div className="flex min-h-screen flex-col">
       <SiteHeader />
       <main className="mx-auto w-full max-w-[1400px] px-5 pb-16 pt-14 md:px-12">
-        <div className="mb-11">
-          <Eyebrow rule>Your account</Eyebrow>
-          <h1 className="mt-3.5 font-display text-3xl font-extrabold tracking-tight text-fg-strong md:text-4xl lg:text-5xl">
-            /me
-          </h1>
-          <p className="mt-2.5 max-w-[52ch] text-base text-fg-muted md:text-md">
-            A running record of everything that almost happened.
-          </p>
+        <div className="mb-11 flex items-start justify-between gap-4">
+          <div>
+            <Eyebrow rule>Your account</Eyebrow>
+            <h1 className="mt-3.5 font-display text-3xl font-extrabold tracking-tight text-fg-strong md:text-4xl lg:text-5xl">
+              /me
+            </h1>
+            <p className="mt-2.5 max-w-[52ch] text-base text-fg-muted md:text-md">
+              A running record of everything that almost happened.
+            </p>
+          </div>
+          {accountStrip}
         </div>
 
         <div className="flex justify-center">
@@ -171,6 +223,8 @@ function EmptyState() {
             </Card>
           </div>
         </div>
+
+        {claimCard && <div className="mt-11 flex">{claimCard}</div>}
       </main>
     </div>
   );

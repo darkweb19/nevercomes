@@ -30,13 +30,13 @@ never a sign-in wall. D7 history pills `pulse={false}`; skeleton `motion-safe:` 
 - [x] `pnpm verify` + `pnpm build` clean + authed-SSR spot-check of /me → commit.
 
 ## Slice 3 — account upgrade UI (Sonnet builds, Fable reviews)
-- [ ] `components/me/AccountStrip.tsx` — anonymous | signed-in (email + Sign out) | just-claimed
+- [x] `components/me/AccountStrip.tsx` — anonymous | signed-in (email + Sign out) | just-claimed
       (`Stamp label="CLAIMED"` + "just now") via browser client + onAuthStateChange.
-- [ ] `components/me/ClaimHistoryCard.tsx` — idle → submitting → check-inbox | error;
+- [x] `components/me/ClaimHistoryCard.tsx` — idle → submitting → check-inbox | error;
       labeled Input, aria-live status; `updateUser({email})` → `signInWithOtp` fallback;
       email-only (Google omitted, D3).
-- [ ] Wired into `app/me/page.tsx` (card only while anonymous). Keyboard + reduced-motion pass.
-- [ ] `pnpm verify` green; manual Inbucket (`:54324`) email check flagged for Sujan → commit.
+- [x] Wired into `app/me/page.tsx` (card only while anonymous). Keyboard + reduced-motion pass.
+- [x] `pnpm verify` green; manual Inbucket (`:54324`) email check flagged for Sujan → commit.
 
 ## Slice 4 — e2e + DoD review + PR (Fable)
 - [ ] `tests/e2e/me-retention.spec.ts` — (1) fresh /me → empty state, no gate; (2) full loop →
