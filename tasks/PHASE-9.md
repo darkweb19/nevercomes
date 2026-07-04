@@ -13,21 +13,21 @@ pattern; never-vs-transit per row via `SIM_DURATION_MS`; no session/no orders �
 never a sign-in wall. D7 history pills `pulse={false}`; skeleton `motion-safe:` only.
 
 ## Slice 1 — pure logic, test-first (Fable)
-- [ ] `tests/unit/me-stats.test.ts` — computeStats (integer cents, `ordersDelivered === 0`
+- [x] `tests/unit/me-stats.test.ts` — computeStats (integer cents, `ordersDelivered === 0`
       invariant, streak w/ injected now) + deriveMilestones (thresholds, deterministic).
-- [ ] `tests/unit/date-format.test.ts` — formatShortDate ("JUST NOW" <10 min, "MAY 18" style,
+- [x] `tests/unit/date-format.test.ts` — formatShortDate ("JUST NOW" <10 min, "MAY 18" style,
       injected now).
-- [ ] `lib/me/stats.ts` + `lib/utils/date.ts` implemented to green. Pure TS, zero React/Supabase.
-- [ ] `pnpm verify` green → commit.
+- [x] `lib/me/stats.ts` + `lib/utils/date.ts` implemented to green. Pure TS, zero React/Supabase.
+- [x] `pnpm verify` green → commit.
 
 ## Slice 2 — /me page + components to the design (Sonnet builds, Fable reviews)
-- [ ] `components/me/StatsCard.tsx`, `OrderHistoryList.tsx`, `MilestonesRow.tsx` (server-safe,
+- [x] `components/me/StatsCard.tsx`, `OrderHistoryList.tsx`, `MilestonesRow.tsx` (server-safe,
       tokens + existing `components/ui` primitives only, no new deps).
-- [ ] `app/me/page.tsx` (dynamic, RLS-scoped orders + profiles.created_at; empty state),
+- [x] `app/me/page.tsx` (dynamic, RLS-scoped orders + profiles.created_at; empty state),
       `app/me/loading.tsx` (skeleton), `app/me/error.tsx` (retry).
-- [ ] `components/catalog/SiteHeader.tsx` — static NC avatar → `Link href="/me"`
+- [x] `components/catalog/SiteHeader.tsx` — static NC avatar → `Link href="/me"`
       (aria-label "Your account").
-- [ ] `pnpm verify` + `pnpm build` clean + authed-SSR spot-check of /me → commit.
+- [x] `pnpm verify` + `pnpm build` clean + authed-SSR spot-check of /me → commit.
 
 ## Slice 3 — account upgrade UI (Sonnet builds, Fable reviews)
 - [ ] `components/me/AccountStrip.tsx` — anonymous | signed-in (email + Sign out) | just-claimed

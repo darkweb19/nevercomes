@@ -101,14 +101,14 @@ export function SiteHeader({ search, onSearch }: SiteHeaderProps) {
             CART &middot; {count}
           </button>
 
-          {/* Avatar placeholder */}
-          <div
-            className="flex h-9 w-9 flex-none items-center justify-center rounded-pill border border-hairline bg-sunken font-mono text-xs text-fg-muted"
-            aria-label="Account"
-            role="img"
+          {/* Account link — navigates to /me */}
+          <Link
+            href="/me"
+            aria-label="Your account"
+            className="flex h-9 w-9 flex-none items-center justify-center rounded-pill border border-hairline bg-sunken font-mono text-xs text-fg-muted transition-colors hover:bg-card hover:text-fg-strong focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
           >
             NC
-          </div>
+          </Link>
 
           <ThemeToggle />
         </div>
