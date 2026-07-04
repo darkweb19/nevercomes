@@ -143,7 +143,7 @@ Make the hero feel like the product, not a generic SaaS landing. Try 2 hero dire
 Brand: NeverComes. Aesthetic = "thermal receipt + delivery tracking." Warm receipt-paper surfaces
 (~#E9E6DC), near-black ink (~#18181B), faded ink (~#7C766B), ONE bold accent = stamp-red
 (~#A81F2D) used sparingly for stamps/CTAs/route lines. Perforated dashed-line motif doubles as
-receipt tear-edge and delivery route. Type: Bricolage Grotesque (display) + Space Mono
+receipt tear-edge and delivery route. Type: Plus Jakarta Sans (display) + Space Mono
 (data/prices/labels). Tone: dry, self-aware, a little haunting. Desktop-web primary, responsive to
 mobile. Small radii (receipts are crisp). Never mimic real brands.
 ```

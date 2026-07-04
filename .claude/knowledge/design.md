@@ -51,7 +51,7 @@ Spend bold color in ONE place (the stamp / route). Everything else is quiet ink 
 
 ### Type
 ```
-display  : "Bricolage Grotesque", sans-serif   /* headlines, the stamp */
+display  : "Plus Jakarta Sans", sans-serif     /* headlines, the stamp (swapped from Bricolage Grotesque 4 Jul — straight-faced delivery-app genre sans; full 200–800 weights) */
 mono     : "Space Mono", monospace             /* data, labels, prices, tracking codes, receipts */
 scale    : 12 / 14 / 16 / 20 / 28 / 40 / 56    /* px, desktop-web primary, responsive */
 ```

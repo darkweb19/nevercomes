@@ -39,6 +39,11 @@ If a hard rule conflicts with a faster shortcut, the rule wins.
   don't call it done.
 - **Protect context.** Use subagents for codebase exploration and for reviewing a diff in a
   fresh context. Keep the Supabase MCP read-only + project-scoped. I will `/clear` between phases.
+- **Subagents run on lower-tier models.** When spawning build/explore/review subagents, always
+  pass an explicit `model`: **Sonnet** for building components / code review / investigation,
+  **Haiku** for simple extraction, summarization, or mostly-static markup. Never let a subagent
+  default to the top-tier model. Split parallelizable work (e.g. independent page sections)
+  across concurrent subagents, each owning disjoint files; the main agent integrates and verifies.
 - **Commit per slice.** One feature = one focused commit, so a bad slice is one `git revert`.
 
 Prefer phrasing: when unsure, ask one focused question rather than guessing.
