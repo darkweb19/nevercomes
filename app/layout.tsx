@@ -1,10 +1,13 @@
 import type { Metadata } from "next";
-import { Bricolage_Grotesque, Space_Mono } from "next/font/google";
+import { Plus_Jakarta_Sans, Space_Mono } from "next/font/google";
 import "./globals.css";
 import { CartDrawer } from "@/components/cart/CartDrawer";
 
-// Display (headlines, the stamp, and — per D4 — body copy).
-const display = Bricolage_Grotesque({
+// Display (headlines, the stamp, and — per D4 — body copy). Plus Jakarta Sans:
+// straight-faced geometric sans in the delivery-app genre, so the chrome reads
+// "real app" and Space Mono carries the receipt deadpan. Full 200–800 weight
+// range — the extrabold headline hierarchy renders as designed.
+const display = Plus_Jakarta_Sans({
   variable: "--font-display",
   subsets: ["latin"],
   display: "swap",
