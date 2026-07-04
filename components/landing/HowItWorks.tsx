@@ -33,7 +33,7 @@ const STEPS = [
   {
     num: "02",
     label: "Add to cart",
-    copy: "Tap. A little dopamine. Tap again. Repeat as needed.",
+    copy: "Tap. Dopamine. Repeat.",
     icon: (
       /* Shopping cart */
       <svg
@@ -57,7 +57,7 @@ const STEPS = [
   {
     num: "03",
     label: "Checkout",
-    copy: "$0.00 CAD. No card. No receipt. Total clears instantly.",
+    copy: "$0.00 CAD. No card. No receipt.",
     icon: (
       /* Receipt / invoice */
       <svg
@@ -80,7 +80,7 @@ const STEPS = [
   {
     num: "04",
     label: "Track",
-    copy: "Watch the courier crawl closer. And closer. And closer.",
+    copy: "Watch the courier crawl closer. And closer.",
     icon: (
       /* Navigation / courier dot */
       <svg
@@ -102,7 +102,7 @@ const STEPS = [
   {
     num: "05",
     label: "It never arrives",
-    copy: "The dot holds two streets away. The bag does not come. As designed.",
+    copy: "The dot holds two streets away. As designed.",
     icon: (
       /* Circle with diagonal slash — accent-colored for the punchline */
       <svg

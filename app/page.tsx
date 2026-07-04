@@ -1,4 +1,4 @@
-import { LandingHeader } from "@/components/landing/LandingHeader";
+import { SiteHeader } from "@/components/catalog/SiteHeader";
 import { Hero } from "@/components/landing/Hero";
 import { HowItWorks } from "@/components/landing/HowItWorks";
 import { TheIdea } from "@/components/landing/TheIdea";
@@ -14,7 +14,7 @@ import { LandingFooter } from "@/components/landing/LandingFooter";
 export default function Home() {
   return (
     <>
-      <LandingHeader />
+      <SiteHeader />
       <main id="top">
         <Hero />
         <div id="how">

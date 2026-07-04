@@ -71,7 +71,10 @@ export function TrackerTeaser() {
       </div>
 
       {/* ── Map area ───────────────────────────────────────────────────── */}
-      <div className="relative h-[300px] bg-carbon-800">
+      {/* The night map is fixed-dark in both themes (like the fixed-light
+          receipt); force .theme-dark so semantic text/border tokens inside
+          (YOU label, ETA chip) stay readable when the page is light. */}
+      <div className="theme-dark relative h-[300px] bg-carbon-800">
         <svg
           viewBox="0 0 400 300"
           width="100%"
@@ -280,7 +283,7 @@ export function TrackerTeaser() {
         <span
           className="flex-none w-10 h-10 rounded-pill flex items-center justify-center font-mono font-bold text-fg-strong text-sm"
           style={{
-            background: "var(--carbon-600)",
+            background: "var(--surface-raised)",
             border: "2px solid var(--border-perf)",
           }}
           aria-hidden="true"

@@ -79,9 +79,8 @@ export function Hero() {
             maxWidth: "46ch",
           }}
         >
-          NeverComes is a shopping app where checkout is free, the courier is
-          always two streets away, and your order stays in transit forever. The
-          dot moves. The bag does not.
+          Free checkout. A courier forever two streets away. The dot moves —
+          the bag does not.
         </p>
 
         {/* CTAs */}
