@@ -6,7 +6,7 @@ Scope: **Screen 1 only** (leaderboard page). Screens 2 (OG share card) and 3 (li
 share moment) are later Phase-10 slices. Directive from Sujan: build Screen 1 **with less UI** —
 fewer words, fewer numbers, fewer controls; the joke carries the screen.
 
-## Decisions (D1–D7) — pending approval
+## Decisions (D1–D7) — APPROVED 2026-07-05
 
 - **D1 — Less-UI cuts (deliberate deviations from the design, per instruction):**
   (a) ONE ranking — MOST SAVED. No flavor tabs, no THIS WEEK/ALL TIME toggle.
@@ -62,8 +62,10 @@ fewer words, fewer numbers, fewer controls; the joke carries the screen.
       populated; (2) place an order via the core loop → leaderboard shows YOU row with a rank.
 - [x] Full gate: `npm run verify` + `npm run test:e2e` (SiteHeader touches the core loop).
       `lib/sim` zero-diff.
-- [ ] `code-reviewer` agent on `main...HEAD`; fix real findings.
-- [ ] Branch `phase-10-leaderboard`, PR → `main`, CI green.
+- [x] `code-reviewer` agent on `main...HEAD`; fix real findings (ARIA table roles,
+      tokenized YOU-row border; 'hand-edited types' blocker + purity-disable claim both
+      disproven with evidence).
+- [x] Branch `phase-10-leaderboard`, PR #22 → `main` (part of #10). CI: watching.
 
 ## Verify commands
 `npm run verify` · `npm run test:e2e` · `npm run db:reset` (migration rebuilds) ·
