@@ -18,7 +18,8 @@ Companion to `design.md`, `spec.md`, and `execution-phases.md`. Paste these into
 - **Handoff:** export the **Claude Code handoff bundle**, or paste the screen into the relevant
   `/new-feature <n>` session. Claude Code reimplements in Next.js + Tailwind against your tokens.
 - **Design-gated phases:** 3 (browse + product), 4 (cart), 5 (checkout), 7 (tracker), 8 (landing),
-  9 (/me + account upgrade). Phases 0, 1, 2, 6 need no screen.
+  9 (/me + account upgrade), 10 (viral: share card + leaderboard + live counters). Phases 0, 1,
+  2, 6 need no screen.
 - **Recommended order:** tracker → browse+product → cart → checkout → landing (landing last; its
   hero teases the tracker).
 
@@ -165,6 +166,48 @@ SCREEN 2 — the account-upgrade moment (anonymous → permanent):
   and the moment right after upgrading (a small stamped confirmation, not confetti).
 
 Include loading and error states for the history list. Show both screens. Then I'll refine.
+```
+
+---
+
+## Phase 10 — Viral (share card, leaderboard, live counters)
+
+```
+Design the "viral" surfaces for NeverComes using my connected design system. Desktop web first
+(~1440px), then tablet (~768px) and mobile (~390px). Deadpan tone, receipt aesthetic. The joke
+these surfaces sell: people competing over, and bragging about, purchases that never arrive.
+Nothing here is triumphant — it's a quiet hall of records for a store with a 0% delivery rate.
+
+SCREEN 1 — Leaderboard page (desktop: ranked table as the main column, global stats beside it):
+- A ranked list styled like a long receipt: rank (mono), an auto-generated deadpan pseudonym
+  (users are anonymous — think "Patient Stranger #4821", never real names), money saved (ghost
+  total, struck-through-adjacent), orders placed, and longest wait. Perforation motif between rows.
+- A tab or toggle for the ranking flavor: MOST SAVED / MOST ORDERS NEVER RECEIVED / LONGEST STREAK,
+  plus a time filter (this week / all time).
+- The current visitor's own row pinned or highlighted ("YOU"), with a dry nudge if they're not on
+  the board yet ("Order nothing. Rise.").
+- A side panel of global mono stats: total never-delivered orders, total money saved across
+  everyone, "orders currently in transit" — and the anchor stat "0 delivered, ever".
+- Include loading and empty states (a brand-new region with nobody on the board yet).
+
+SCREEN 2 — OG share card (a STATIC 1200×630 social-preview image, not an interactive screen):
+- This is the image that unfurls when someone pastes their link into a chat or feed. It must read
+  at thumbnail size: one big deadpan claim in display type, mono numbers, the stamp-red accent,
+  receipt-paper background, a dashed route line going nowhere, and a small rotated "NEVER ARRIVED"
+  stamp. NeverComes wordmark small in a corner.
+- Show 2–3 variants: (a) a single order ("In transit for 3 days. It never comes."), (b) personal
+  stats from /me ("$412.88 saved. 0 things received."), (c) a leaderboard rank brag.
+- Keep it flat and export-friendly — no gradients or effects that won't survive as a rendered PNG.
+
+SCREEN 3 — live-counter moments (small components, not a page):
+- A "people shopping right now" live counter and an "orders currently never arriving" ticker, in
+  mono, calm — a slow heartbeat, not a slot machine. Show where they live: the landing social-proof
+  strip (upgrading its static stats to live) and a compact variant for the site header or /browse.
+- A SHARE moment: a small "Share your wait" control on the tracker and /me that produces the link
+  behind the OG card — show its idle and copied/confirmed states (a small stamp, not confetti).
+- Show a reduced-motion variant: counters update as stepped text changes, no pulsing.
+
+Show all three. Then I'll refine.
 ```
 
 ---
