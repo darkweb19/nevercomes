@@ -482,6 +482,7 @@ export type Database = {
         }
         Returns: string
       }
+      leaderboard: { Args: never; Returns: Json }
     }
     Enums: {
       order_status: "accepted" | "preparing" | "picked_up" | "nearby" | "never"
