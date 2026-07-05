@@ -65,63 +65,89 @@ export function LeaderboardTable({ rows, you }: LeaderboardTableProps) {
   // ── Populated table ──────────────────────────────────────────────────────
   return (
     <Card padded={false}>
-      {/* Header row */}
-      <div className={`${GRID} px-6 py-3.5`}>
-        <span className={HDR}>Rank</span>
-        <span className={HDR}>Pseudonym</span>
-        <span className={`${HDR} text-right`}>Saved</span>
-        <span className={`${HDR} hidden text-right sm:block`}>Longest Wait</span>
-      </div>
-
-      {/* Data rows */}
-      {rows.map((row) => (
-        <div
-          key={`${row.rank}-${row.code}`}
-          className={`${GRID} border-t border-dashed border-hairline px-6 py-4`}
-        >
-          <span className="font-mono text-sm font-bold text-fg-faint">
-            {row.rank}
+      <div role="table" aria-label="Leaderboard, ranked by money saved">
+        {/* Header row */}
+        <div role="row" className={`${GRID} px-6 py-3.5`}>
+          <span role="columnheader" className={HDR}>
+            Rank
           </span>
-          <span>
-            <span className="font-display text-base font-semibold text-fg-strong">
-              {row.name}
-            </span>{" "}
-            <span className="font-mono text-xs text-fg-faint">#{row.code}</span>
+          <span role="columnheader" className={HDR}>
+            Pseudonym
           </span>
-          <span className="text-right font-mono text-sm font-bold text-fg-strong">
-            {row.saved}
+          <span role="columnheader" className={`${HDR} text-right`}>
+            Saved
           </span>
-          <span className="hidden text-right font-mono text-sm text-fg sm:block">
-            {row.wait}
+          <span
+            role="columnheader"
+            className={`${HDR} hidden text-right sm:block`}
+          >
+            Longest Wait
           </span>
         </div>
-      ))}
 
-      {/* YOU row — pinned after data rows, accent treatment */}
-      {you && (
-        <div
-          className={`${GRID} bg-accent-wash px-6 py-4`}
-          style={{ borderTop: "1.5px dashed var(--accent)" }}
-        >
-          <span className="font-mono text-sm font-bold text-accent">
-            {you.rankLabel}
-          </span>
-          <span>
-            <span className="font-display text-base font-bold text-fg-strong">
-              YOU
-            </span>{" "}
-            <span className="font-mono text-xs text-fg-muted">
-              &mdash; {you.name} #{you.code}
+        {/* Data rows */}
+        {rows.map((row) => (
+          <div
+            key={`${row.rank}-${row.code}`}
+            role="row"
+            className={`${GRID} border-t border-dashed border-hairline px-6 py-4`}
+          >
+            <span role="cell" className="font-mono text-sm font-bold text-fg-faint">
+              {row.rank}
             </span>
-          </span>
-          <span className="text-right font-mono text-sm font-bold text-fg-strong">
-            {you.saved}
-          </span>
-          <span className="hidden text-right font-mono text-sm text-fg sm:block">
-            {you.wait}
-          </span>
-        </div>
-      )}
+            <span role="cell">
+              <span className="font-display text-base font-semibold text-fg-strong">
+                {row.name}
+              </span>{" "}
+              <span className="font-mono text-xs text-fg-faint">#{row.code}</span>
+            </span>
+            <span
+              role="cell"
+              className="text-right font-mono text-sm font-bold text-fg-strong"
+            >
+              {row.saved}
+            </span>
+            <span
+              role="cell"
+              className="hidden text-right font-mono text-sm text-fg sm:block"
+            >
+              {row.wait}
+            </span>
+          </div>
+        ))}
+
+        {/* YOU row — pinned after data rows, accent treatment */}
+        {you && (
+          <div
+            role="row"
+            className={`${GRID} border-t-[1.5px] border-dashed border-accent bg-accent-wash px-6 py-4`}
+          >
+            <span role="cell" className="font-mono text-sm font-bold text-accent">
+              {you.rankLabel}
+            </span>
+            <span role="cell">
+              <span className="font-display text-base font-bold text-fg-strong">
+                YOU
+              </span>{" "}
+              <span className="font-mono text-xs text-fg-muted">
+                &mdash; {you.name} #{you.code}
+              </span>
+            </span>
+            <span
+              role="cell"
+              className="text-right font-mono text-sm font-bold text-fg-strong"
+            >
+              {you.saved}
+            </span>
+            <span
+              role="cell"
+              className="hidden text-right font-mono text-sm text-fg sm:block"
+            >
+              {you.wait}
+            </span>
+          </div>
+        )}
+      </div>
     </Card>
   );
 }
