@@ -17,8 +17,8 @@ Companion to `design.md`, `spec.md`, and `execution-phases.md`. Paste these into
   than long re-prompts (saves usage).
 - **Handoff:** export the **Claude Code handoff bundle**, or paste the screen into the relevant
   `/new-feature <n>` session. Claude Code reimplements in Next.js + Tailwind against your tokens.
-- **Design-gated phases:** 3 (browse + product), 4 (cart), 5 (checkout), 7 (tracker), 8 (landing).
-  Phases 0, 1, 2, 6 need no screen.
+- **Design-gated phases:** 3 (browse + product), 4 (cart), 5 (checkout), 7 (tracker), 8 (landing),
+  9 (/me + account upgrade). Phases 0, 1, 2, 6 need no screen.
 - **Recommended order:** tracker → browse+product → cart → checkout → landing (landing last; its
   hero teases the tracker).
 
@@ -133,6 +133,38 @@ Sections:
 - Closing CTA band + minimal wry footer (About, Privacy — "we keep your data fake/minimal").
 
 Make the hero feel like the product, not a generic SaaS landing. Try 2 hero directions.
+```
+
+---
+
+## Phase 9 — /me (stats, order history, account upgrade)
+
+```
+Design the personal "/me" screen for NeverComes using my connected design system. Desktop web
+first (~1440px), then tablet (~768px) and mobile (~390px). Deadpan tone, receipt aesthetic. This
+is the retention screen: the user's whole relationship with a store that never delivers, told in
+their own numbers. A quiet ledger, not a gamified dashboard.
+
+SCREEN 1 — /me dashboard (desktop: stats strip on top, history as the main column):
+- A stats strip in mono, styled like receipt totals. The hero number is MONEY SAVED — the ghost
+  total of everything they never paid, big and struck-through-adjacent. Beside it: orders placed,
+  orders delivered (always 0 — let the zero sit there, deadpan), and the streak in days ("days in
+  a row of buying nothing").
+- ORDER HISTORY as a stack of compact receipt rows: vendor, first item + "N more", ghost total
+  struck through, date (mono), and a status chip that is always some flavor of "still in transit"
+  or a small stamp-red "NEVER ARRIVED" for orders past the two-minute mark. Every row links back
+  to its tracker. Use the perforation motif between rows.
+- An empty state for a brand-new visitor: one dry line and a primary "Start a fake order" CTA.
+- Optional quiet extras: a faded achievements row (small ink badges), nothing shiny.
+
+SCREEN 2 — the account-upgrade moment (anonymous → permanent):
+- Everything already works signed-out; this is an UPGRADE, never a gate. A calm inline card (or
+  modal) on /me: "Claim your history" — email field + one OAuth button, pitched deadpan: the only
+  thing at stake is your record of things that never arrived, and it would be a shame to lose it.
+- Show three header states: anonymous (upgrade nudge visible), signed-in (email shown, sign-out),
+  and the moment right after upgrading (a small stamped confirmation, not confetti).
+
+Include loading and error states for the history list. Show both screens. Then I'll refine.
 ```
 
 ---
