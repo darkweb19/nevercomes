@@ -169,10 +169,11 @@ export function ClaimHistoryCard({ initialVisible }: ClaimHistoryCardProps) {
                     disabled={cardState === "submitting"}
                     autoComplete="email"
                   />
+                  {/* No role="alert": the aria-live="polite" wrapper already
+                      announces this, and alert would double-announce. */}
                   {errorMsg && (
                     <p
                       id="claim-error"
-                      role="alert"
                       className="mt-2 font-mono text-2xs text-accent"
                     >
                       {errorMsg}

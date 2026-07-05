@@ -39,11 +39,11 @@ never a sign-in wall. D7 history pills `pulse={false}`; skeleton `motion-safe:` 
 - [x] `pnpm verify` green; manual Inbucket (`:54324`) email check flagged for Sujan → commit.
 
 ## Slice 4 — e2e + DoD review + PR (Fable)
-- [ ] `tests/e2e/me-retention.spec.ts` — (1) fresh /me → empty state, no gate; (2) full loop →
+- [x] `tests/e2e/me-retention.spec.ts` — (1) fresh /me → empty state, no gate; (2) full loop →
       /me shows stats + IN TRANSIT row linking to tracker; (3) claim card → check-inbox state.
-- [ ] Full gate: `pnpm verify` + `pnpm test:e2e` (SiteHeader touched core loop). `lib/sim`
+- [x] Full gate: `pnpm verify` + `pnpm test:e2e` (SiteHeader touched core loop). `lib/sim`
       zero-diff.
-- [ ] `code-reviewer` agent on `main...HEAD`; fix real findings.
+- [x] `code-reviewer` agent on `main...HEAD`; fix real findings.
 - [ ] Push, PR → `main` (Closes #9 if exists), CI green.
 
 ## Out-of-band (deploy reminders, not code)
