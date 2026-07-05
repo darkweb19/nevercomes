@@ -44,7 +44,7 @@ never a sign-in wall. D7 history pills `pulse={false}`; skeleton `motion-safe:` 
 - [x] Full gate: `pnpm verify` + `pnpm test:e2e` (SiteHeader touched core loop). `lib/sim`
       zero-diff.
 - [x] `code-reviewer` agent on `main...HEAD`; fix real findings.
-- [ ] Push, PR → `main` (Closes #9 if exists), CI green.
+- [x] Push, PR → `main` (PR #21, Closes #9), CI green (verify 28s, e2e 3m8s).
 
 ## Out-of-band (deploy reminders, not code)
 - [ ] Prod SMTP not configured — upgrade emails rate-limited (~2/hr) until an SMTP provider is
