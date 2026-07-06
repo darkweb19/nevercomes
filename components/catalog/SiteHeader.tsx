@@ -75,6 +75,14 @@ export function SiteHeader({ search, onSearch }: SiteHeaderProps) {
             24/7 &middot; CA
           </span>
 
+          {/* Leaderboard link */}
+          <Link
+            href="/leaderboard"
+            className="hidden font-mono text-xs uppercase tracking-label text-fg-muted transition-colors hover:text-fg-strong focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent sm:block"
+          >
+            Leaderboard
+          </Link>
+
           {/* Cart button */}
           <button
             type="button"
