@@ -38,8 +38,15 @@ export default async function LeaderboardPage() {
   // eslint-disable-next-line react-hooks/purity -- server component, runs once per request
   const now = Date.now();
 
-  const { data } = await supabase.rpc("leaderboard");
-  const board = parseLeaderboard(data);
+  let rpcData: Awaited<ReturnType<typeof supabase.rpc<"leaderboard">>>["data"] =
+    null;
+  try {
+    const { data } = await supabase.rpc("leaderboard");
+    rpcData = data;
+  } catch {
+    // Stale / invalid session — treat as anonymous, page still renders.
+  }
+  const board = parseLeaderboard(rpcData);
 
   // Shape display rows — page does the formatting, LeaderboardTable stays dumb.
   const displayRows = board.rows.map((entry) => {

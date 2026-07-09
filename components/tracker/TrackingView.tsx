@@ -37,6 +37,8 @@ import { StatusPill } from "@/components/ui/StatusPill";
 import { etaAt, stageTimes, statusToRowStates } from "./display";
 import { StatusTimeline } from "./StatusTimeline";
 import { TrackerMap } from "./TrackerMap";
+import { ShareWait } from "@/components/viral/ShareWait";
+import { daysInTransit } from "@/lib/viral/share";
 
 // ── Constants ────────────────────────────────────────────────────────────────
 
@@ -109,10 +111,15 @@ function XIcon() {
  * null = not yet mounted (SSR); non-null = hydrated with reduce + first frame.
  * Using a single object avoids firing multiple synchronous setState calls from
  * the mount effect, which triggers a lint warning.
+ *
+ * shareSubtitle is captured at mount time (day-granularity) for the ShareWait
+ * card. It lives here so it's set atomically with `reduce` and `frame`.
  */
 interface ClientState {
   reduce: boolean;
   frame: SimFrame;
+  shareSubtitle: string;
+  createdAtMs: number;
 }
 
 // ── Props ────────────────────────────────────────────────────────────────────
@@ -165,11 +172,26 @@ export function TrackingView({
 
   useEffect(() => {
     const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
-    const elapsed =
-      Date.now() - createdAtMs.current - replayOffsetRef.current;
+    const now = Date.now();
+    const ms = createdAtMs.current;
+    const elapsed = now - ms - replayOffsetRef.current;
+    // Capture share subtitle at mount (day-granularity; doesn't need updating
+    // on every rAF tick — a day-accurate snapshot is sufficient for a share URL).
+    const days = daysInTransit(ms, now);
+    const shareSubtitle =
+      days === 0
+        ? "In transit since today"
+        : days === 1
+          ? "In transit for 1 day"
+          : `In transit for ${days} days`;
     // Single setState call → avoids the lint rule for synchronous setState in
-    // effect bodies while still setting both values atomically.
-    setClient({ reduce: mq.matches, frame: step({ route: [] }, elapsed) });
+    // effect bodies while still setting all values atomically.
+    setClient({
+      reduce: mq.matches,
+      frame: step({ route: [] }, elapsed),
+      shareSubtitle,
+      createdAtMs: ms,
+    });
   }, []); // runs once on mount
 
   // ── 2. rAF loop (animated path, when not reduce or stamped) ─────────────────
@@ -385,6 +407,21 @@ export function TrackingView({
             pickedUpTime={times.pickedUp}
             vendorName={displayVendor}
           />
+
+          {/* Share card — bottom of panel body, per design §s3 "on tracker" */}
+          {client && (
+            <div className="mt-5">
+              <ShareWait
+                payload={{
+                  v: "order",
+                  code: shortCode,
+                  createdAtMs: client.createdAtMs,
+                }}
+                title={`Order #${shortCode}`}
+                subtitle={client.shareSubtitle}
+              />
+            </div>
+          )}
         </div>
 
         {/* Actions footer */}
