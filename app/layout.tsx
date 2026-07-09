@@ -22,6 +22,7 @@ const mono = Space_Mono({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000"),
   title: "NeverComes",
   description: "All the dopamine of buying, none of the receipt.",
 };
