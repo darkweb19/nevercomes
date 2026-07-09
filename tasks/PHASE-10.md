@@ -70,3 +70,61 @@ fewer words, fewer numbers, fewer controls; the joke carries the screen.
 ## Verify commands
 `npm run verify` · `npm run test:e2e` · `npm run db:reset` (migration rebuilds) ·
 `npm run db:types` (no diff after regen)
+
+---
+
+# Phase 10 (slices: Screens 2–3) — OG share cards + live counters + share moment
+[design-gated: PROVIDED — same `viral-surfaces.html`, §s2 + §s3] — STARTED 2026-07-05
+
+Branch `phase-10-viral-share`. Orchestration: Fable plans/integrates/verifies; three
+parallel Sonnet subagents build disjoint files.
+
+## Decisions (D8–D14) — per the D1 "less UI" precedent
+
+- **D8 — Self-contained share links.** `/track` is RLS owner-scoped (strangers 404), so
+  shares point at a public `/w` surface whose data travels in the query string:
+  `?v=order&c=NC-XXXX&t=<epochMs>` / `?v=me&s=<cents>&o=<n>&w=<days>&p=<seed>`.
+  No DB read, no migration, no privacy leak; forgeable and that's fine (parody).
+  Contract = `lib/viral/share.ts` (pure, tested — Fable-owned).
+- **D9 — OG images** via `next/og` `ImageResponse` at `/api/og`, 1200×630, flat paper
+  palette per Screen 2. Variants 2a (order) + 2b (me). **2c (rank) deferred** — the
+  leaderboard has no share affordance by D1; revisit if Sujan wants it.
+- **D10 — `/w` page = the designed card + one CTA.** No invented layout: it renders the
+  OG card artwork itself, plus `generateMetadata` OG/twitter tags for unfurls.
+- **D11 — Counters are deterministic theater.** `lib/viral/counters.ts` (pure, test-first)
+  maps a timestamp → plausible `shoppersNow` / `ordersInTransit`; client ticks every ~4s.
+  Landing SocialProof strip upgraded to Screen 3's three cells (SHOPPING RIGHT NOW /
+  ORDERS NEVER ARRIVING / DELIVERED, EVER = 0 in accent). Landing stays static; no DB.
+- **D12 — Compact header counter pill CUT** (same less-UI reasoning as D1e).
+- **D13 — Reduced motion:** no pulsing dots, stepped number updates (`motion-safe:` only).
+- **D14 — /me pseudonym** computed server-side as `md5(user.id).slice(0,12)` — byte-for-byte
+  the seed `leaderboard()` emits, so /me and leaderboard agree on your name.
+
+## Slice E — Screen 2: `/w` + `/api/og` (Agent A, Sonnet)
+- [x] `app/api/og/route.tsx` — ImageResponse; variants order/me per design 2a/2b;
+      vendored TTF fonts (committed, OFL-licensed); 400 on malformed params.
+- [x] `app/w/page.tsx` — public share landing: designed card + CTA + OG meta tags.
+      (Fable review fix: card type scales with container via `cqw`, not viewport `vw`;
+      `metadataBase` added to root layout for absolute OG URLs.)
+- [x] Local check: `curl -sI` both variants → 200 `image/png` (valid 1200×630 PNG
+      confirmed with `file`); /w order+me → 200, malformed → 404; malformed og → 400.
+
+## Slice F — Screen 3: live counters on landing (Agent B, Sonnet)
+- [x] `tests/unit/counters.test.ts` FIRST (determinism, plausible bounds, drift).
+- [x] `lib/viral/counters.ts` pure; `components/viral/LiveCounters.tsx` client ticker.
+- [x] `components/landing/SocialProof.tsx` strip → Screen 3's three cells;
+      `NeverCounter` absorbed/removed. Reduced-motion per D13.
+
+## Slice G — Screen 3: share moment (Agent C, Sonnet)
+- [x] `components/viral/ShareWait.tsx` — copy-link card; "LINK COPIED. AS PREDICTED."
+- [x] Tracker panel + /me integration (order + me payloads via `lib/viral/share.ts`;
+      /me guards confirmed: early-returns cover no-user and zero-orders before the
+      new `orders[orders.length - 1]` read).
+- [x] `tests/e2e/share.spec.ts` — order → tracker → share → open link logged-out →
+      public card renders; OG endpoint 200.
+
+## Integration (Fable)
+- [x] Review each agent diff; `npm run verify` + `npm run test:e2e` full gate —
+      154 unit + 8/8 e2e green; `lib/sim` zero-diff vs main.
+- [ ] `code-reviewer` agent on `main...HEAD`; fix real findings.
+- [ ] Commit per slice; PR → `main`.

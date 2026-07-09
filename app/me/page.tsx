@@ -9,6 +9,7 @@
  */
 import type { ReactNode } from "react";
 import type { Metadata } from "next";
+import { createHash } from "node:crypto";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import { SiteHeader } from "@/components/catalog/SiteHeader";
@@ -20,8 +21,10 @@ import { OrderHistoryList } from "@/components/me/OrderHistoryList";
 import { MilestonesRow } from "@/components/me/MilestonesRow";
 import { AccountStrip } from "@/components/me/AccountStrip";
 import { ClaimHistoryCard } from "@/components/me/ClaimHistoryCard";
+import { ShareWait } from "@/components/viral/ShareWait";
 import { computeStats, deriveMilestones } from "@/lib/me/stats";
 import { SIM_DURATION_MS } from "@/lib/sim/constants";
+import { daysInTransit } from "@/lib/viral/share";
 
 // cookies() makes this dynamic; explicit annotation ensures it's never cached.
 export const dynamic = "force-dynamic";
@@ -94,6 +97,15 @@ export default async function MePage() {
   const stats = computeStats(orderInputs, profileCreatedAt, now);
   const milestones = deriveMilestones(stats);
 
+  // Share payload (D14): seed matches substr(md5(profile_id), 0, 12) in the DB.
+  // node:crypto is server-only — never leaks to the client bundle.
+  const seed = createHash("md5").update(user.id).digest("hex").slice(0, 12);
+
+  // waitDays: whole days since the OLDEST order's created_at. Orders are sorted
+  // descending (most-recent first), so the oldest is the last element.
+  const oldestOrderCreatedAt = orders[orders.length - 1].created_at;
+  const waitDays = daysInTransit(Date.parse(oldestOrderCreatedAt), now);
+
   // Build display rows — all nullable chains guarded.
   const rows = orders.map((order) => {
     const items = order.order_items ?? [];
@@ -155,6 +167,21 @@ export default async function MePage() {
             <MilestonesRow milestones={milestones} />
           </div>
         )}
+
+        {/* Share wait — after milestones, before ClaimHistoryCard, max-w-[420px] */}
+        <div className="mt-11 max-w-[420px]">
+          <ShareWait
+            payload={{
+              v: "me",
+              savedCents: stats.moneySavedCents,
+              orders: stats.ordersPlaced,
+              waitDays,
+              seed,
+            }}
+            title="Your wait"
+            subtitle={`${stats.ordersPlaced} orders placed · 0 delivered`}
+          />
+        </div>
 
         {/* Claim history card — shown only while session is anonymous */}
         {initialIsAnonymous && (

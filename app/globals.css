@@ -79,6 +79,16 @@
 }
 
 /*
+ * Share card: "Link copied" confirmation fade-in.
+ * Used by ShareWait.tsx — only fires under motion-safe: so reduced-motion
+ * users see the element at full opacity with no animation.
+ */
+@keyframes ncFadeIn {
+  from { opacity: 0.25; }
+  to   { opacity: 1; }
+}
+
+/*
  * ETA hero flip: a small rise + fade-in applied to an INNER element so it
  * doesn't fight the hero card's positioning. Triggered by React key change.
  * The global reduced-motion rule above collapses animation-duration to 0.01ms
