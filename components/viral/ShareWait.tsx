@@ -140,7 +140,7 @@ export function ShareWait({ payload, title, subtitle }: ShareWaitProps) {
           <button
             type="button"
             onClick={handleShare}
-            className="flex items-center gap-2.5 w-full px-3.5 py-2.5 rounded-sm border border-hairline bg-transparent text-fg-strong font-mono font-bold text-xs uppercase tracking-label cursor-pointer transition-colors hover:bg-sunken"
+            className="flex items-center gap-2.5 w-full px-3.5 py-2.5 rounded-sm border border-hairline bg-transparent text-fg-strong font-mono font-bold text-xs uppercase tracking-label cursor-pointer transition-colors hover:bg-sunken focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2"
             style={{ borderWidth: "1.5px" }}
           >
             <ShareIcon />

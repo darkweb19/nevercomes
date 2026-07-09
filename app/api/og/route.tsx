@@ -56,12 +56,19 @@ function getFonts(): Promise<FontData> {
       fs.readFile(path.join(dir, "PlusJakartaSans-ExtraBold.ttf")),
       fs.readFile(path.join(dir, "SpaceMono-Regular.ttf")),
       fs.readFile(path.join(dir, "SpaceMono-Bold.ttf")),
-    ]).then(([display700, display800, mono400, mono700]) => ({
-      display700,
-      display800,
-      mono400,
-      mono700,
-    }));
+    ])
+      .then(([display700, display800, mono400, mono700]) => ({
+        display700,
+        display800,
+        mono400,
+        mono700,
+      }))
+      .catch((err) => {
+        // Don't cache a rejection: a transient fs failure would otherwise
+        // break every OG card until the next cold start.
+        fontsCache = null;
+        throw err;
+      });
   }
   return fontsCache;
 }

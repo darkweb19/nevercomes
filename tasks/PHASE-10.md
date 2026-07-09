@@ -126,5 +126,11 @@ parallel Sonnet subagents build disjoint files.
 ## Integration (Fable)
 - [x] Review each agent diff; `npm run verify` + `npm run test:e2e` full gate —
       154 unit + 8/8 e2e green; `lib/sim` zero-diff vs main.
-- [ ] `code-reviewer` agent on `main...HEAD`; fix real findings.
-- [ ] Commit per slice; PR → `main`.
+- [x] `code-reviewer` agent on `main...HEAD` — verdict **ship, zero blockers** (all hard
+      rules pass; this time the reviewer empirically confirmed `react-hooks/purity` is
+      real instead of repeating the past false claim). Applied 2 nits: explicit
+      focus-visible ring on ShareWait's button; OG font cache no longer caches a
+      rejection. Rejected 1 with evidence: design §s3 explicitly wants counters to keep
+      stepped text updates under reduced motion — freezing them would deviate.
+- [x] Commit per slice (`0daaee9` E / `e42eac0` F / `443a48b` G + review-fix commit);
+      PR → `main`.
