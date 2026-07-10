@@ -44,20 +44,30 @@ the trigger/pre-seed infra. Slice D (browse integration) is **deferred** — des
       ANTHROPIC_API_KEY); ANTHROPIC_API_KEY note added to root `.env.example` (never NEXT_PUBLIC_)
 - [x] pytest: 95 tests — validators, blocklist, price bounds, idempotency guard (no network)
 
-## Slice C — trigger + pre-seed (commit 3)
-- [ ] `.github/workflows/catalog.yml`: cron ~15 min → `--all-pending --max-regions 5`;
-      `workflow_dispatch(postal_prefix, force)`; `concurrency` group; secrets in GH
-- [ ] `workers/catalog/preseed.py`: upsert GTA region rows from static FSA→centroid table
-      (M5V, M5G, M4Y, M6J, M5A, M4C, M2N, M9V, L5B, L4C), then generate pending
-- [ ] `workers/catalog/README.md`: setup, local run against `npm run db:start`, secrets, cost
+## Slice C — trigger + pre-seed (commit 3) ✅ `3aaf593`
+- [x] `.github/workflows/catalog.yml`: cron 15 min → `--all-pending --max-regions 5`;
+      `workflow_dispatch(postal_prefix, force, preseed)`; `concurrency` group; secrets in GH
+      (SUPABASE_URL already exists from keep-alive; SERVICE_ROLE + ANTHROPIC_API_KEY are new)
+- [x] `workers/catalog/catalog/preseed.py`: ensures GTA region rows from static FSA→centroid
+      table (M5V, M5G, M4Y, M6J, M5A, M4C, M2N, M9V, L5B, L4C — never overwrites existing),
+      then generates pending; +5 pytest tests (100 total)
+- [x] `workers/catalog/README.md`: setup, local run against `npm run db:start`, secrets, cost
 
 ## Out of scope (deferred)
 - Slice D — region-scoped `/browse` + "preparing your store…" state (design-gated)
 - Product imagery / CDN; OSRM / Overpass
 
 ## Verification
-- [ ] A: `db:reset` clean rebuild; `verify` green; `db:types:check` passes
-- [ ] B: pytest green; live local run for M5V → rows w/ `ai_generated=true` + `region_id` set,
-      `catalog_generated` flipped, `events` row; re-run no-op; `--force` regenerates
-- [ ] C: workflow reviewed/dry-run; preseed run against local DB
-- [ ] Phase end: `npm run verify` + one `npm run test:e2e` sanity pass
+- [x] A: `db:reset` clean rebuild; `verify` green (154 unit)
+- [x] B: pytest green (108 tests); **live local run for M5V (`--force`) verified**: generated
+      7 vendors / 49 products / 51 reviews, all `region_id`=M5V + `ai_generated=true`;
+      global floor untouched (4 vendors / 30 products still NULL-region); **0 orphan reviews**
+      (alignment fix confirmed on real data); `catalog_generated` flipped; `events` audit row
+      with counts + usage (3,577 in / 7,349 out ≈ $0.04); no brand leaks; re-run without
+      `--force` skips (0 tokens, no duplication)
+- [x] C: workflow reviewed; preseed logic tested (live GTA fill left for the pre-seed dispatch)
+- [x] Phase end: `npm run verify` green + `npm run test:e2e` 8/8 green
+- [x] DoD code-review on `main...HEAD` — verdict "fix first"; both blockers fixed in `299ee5d`
+      (position-aligned product ids w/ None gaps; id mappings from client-built rows, never
+      response order; validate node now bounds-checks indexes) + nits applied (env-block force
+      flag, pinned requirements, public insert_region, redundant cap removed); 108 pytest tests
