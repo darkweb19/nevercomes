@@ -62,11 +62,10 @@ def main() -> int:
     )
 
     # Imported here so the module stays importable without env vars
-    from .db import _get_client, get_region_by_prefix
+    from .db import get_region_by_prefix, insert_region
     from .graph import run_for_region
     from .run import should_generate
 
-    client = _get_client()
     ensured: list[dict[str, Any]] = []
 
     for entry in GTA_REGIONS:
@@ -76,11 +75,7 @@ def main() -> int:
             log.info("Region %s exists (catalog_generated=%s)", prefix, existing["catalog_generated"])
             ensured.append(existing)
             continue
-        resp = client.table("regions").insert(region_row(entry)).execute()
-        created = resp.data[0] if resp.data else None
-        if created is None:
-            log.error("Insert for %s returned no row", prefix)
-            return 1
+        created = insert_region(region_row(entry))
         log.info("Created region %s", prefix)
         ensured.append(created)
 

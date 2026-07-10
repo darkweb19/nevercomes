@@ -45,6 +45,7 @@ jobs:
       SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
       ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
       POSTAL_PREFIX: ${{ inputs.postal_prefix }}
+      FORCE_FLAG: ${{ inputs.force && '--force' || '' }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
@@ -60,7 +61,7 @@ jobs:
 
       - name: Generate one region
         if: github.event_name == 'workflow_dispatch' && inputs.postal_prefix != ''
-        run: python -m catalog.run --postal-prefix "$POSTAL_PREFIX" ${{ inputs.force && '--force' || '' }}
+        run: python -m catalog.run --postal-prefix "$POSTAL_PREFIX" $FORCE_FLAG
 
       - name: Generate all pending
         if: github.event_name == 'schedule' || (github.event_name == 'workflow_dispatch' && inputs.postal_prefix == '')

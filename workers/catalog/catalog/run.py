@@ -180,7 +180,9 @@ def main(argv: list[str] | None = None) -> int:
             return 0
 
         log.info("Found %d pending region(s)", len(pending))
-        regions_to_run = plan_regions(pending, force=False, max_regions=args.max_regions)
+        # get_pending_regions already applied the max_regions cap; plan_regions
+        # here is only the defensive catalog_generated filter.
+        regions_to_run = plan_regions(pending, force=False)
 
         for region in regions_to_run:
             prefix = region["postal_prefix"]

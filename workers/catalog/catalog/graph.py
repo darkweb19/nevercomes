@@ -210,6 +210,15 @@ def node_validate(state: CatalogState) -> CatalogState:
 
     errors: list[str] = []
 
+    # Index bounds — a bad index here would silently drop rows at upsert time,
+    # so catch it in validation where the retry path can fix it.
+    for i, p in enumerate(products):
+        if p.vendor_index < 0 or p.vendor_index >= len(vendors):
+            errors.append(f"Product[{i}].vendor_index {p.vendor_index} out of range (0-{len(vendors)-1})")
+    for i, r in enumerate(reviews):
+        if r.product_index < 0 or r.product_index >= len(products):
+            errors.append(f"Review[{i}].product_index {r.product_index} out of range (0-{len(products)-1})")
+
     # Check vendors
     for i, v in enumerate(vendors):
         for field_name in ("name", "tagline"):
@@ -271,11 +280,12 @@ def node_upsert(state: CatalogState) -> CatalogState:
     vendor_ids = [v["id"] for v in inserted_vendors]
     log.info("Inserted %d vendors", len(vendor_ids))
 
-    # Serialize products for DB insertion
+    # Serialize products for DB insertion. product_ids is position-aligned with
+    # products (None where a product was skipped) so review indexes stay correct.
     products_raw = [p.model_dump() for p in products]
-    inserted_products = insert_products(products_raw, vendor_ids, categories, region_id)
-    product_ids = [p["id"] for p in inserted_products]
-    log.info("Inserted %d products", len(product_ids))
+    product_ids = insert_products(products_raw, vendor_ids, categories, region_id)
+    inserted_product_count = sum(1 for pid in product_ids if pid is not None)
+    log.info("Inserted %d products", inserted_product_count)
 
     # Serialize reviews for DB insertion
     reviews_raw = [r.model_dump() for r in reviews]
@@ -291,7 +301,7 @@ def node_upsert(state: CatalogState) -> CatalogState:
         region_id=region_id,
         postal_prefix=postal_prefix,
         vendor_count=len(vendor_ids),
-        product_count=len(product_ids),
+        product_count=inserted_product_count,
         review_count=review_count,
         model=MODEL,
         temperature=TEMPERATURE,
@@ -302,7 +312,7 @@ def node_upsert(state: CatalogState) -> CatalogState:
         "Catalog upsert complete for %s: %d vendors, %d products, %d reviews | tokens: %d in / %d out",
         postal_prefix,
         len(vendor_ids),
-        len(product_ids),
+        inserted_product_count,
         review_count,
         usage.get("input_tokens", 0),
         usage.get("output_tokens", 0),

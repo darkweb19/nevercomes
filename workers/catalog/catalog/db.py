@@ -72,6 +72,15 @@ def get_category_map(slugs: list[str]) -> dict[str, str]:
     return {row["slug"]: row["id"] for row in (resp.data or [])}
 
 
+def insert_region(row: dict[str, Any]) -> dict[str, Any]:
+    """Insert a regions row (used by preseed). Returns the created row."""
+    client = _get_client()
+    resp = client.table("regions").insert(row).execute()
+    if not resp.data:
+        raise RuntimeError(f"regions insert returned no row for {row.get('postal_prefix')}")
+    return resp.data[0]
+
+
 def delete_vendors_for_region(region_id: str) -> None:
     """Delete all vendors for a region (FK cascade wipes products/reviews)."""
     client = _get_client()
@@ -83,8 +92,11 @@ def insert_vendors(
     vendors_data: list[dict[str, Any]], region_id: str
 ) -> list[dict[str, Any]]:
     """
-    Insert vendor rows and return them with their assigned UUIDs.
-    Each vendor gets ai_generated=True, locale='en-CA', hero_image=None.
+    Insert vendor rows and return them (in input order, with their UUIDs).
+
+    IDs are generated client-side, so the returned rows — not the API response,
+    whose ordering is not contractually guaranteed — are the source of truth for
+    the vendor_index → id mapping.
     """
     client = _get_client()
     rows = [
@@ -100,8 +112,8 @@ def insert_vendors(
         }
         for v in vendors_data
     ]
-    resp = client.table("vendors").insert(rows).execute()
-    return resp.data or rows  # fall back to the rows we built if upsert doesn't return data
+    client.table("vendors").insert(rows).execute()
+    return rows
 
 
 def insert_products(
@@ -109,50 +121,55 @@ def insert_products(
     vendor_ids: list[str],
     category_map: dict[str, str],
     region_id: str,
-) -> list[dict[str, Any]]:
+) -> list[str | None]:
     """
-    Insert product rows.
-    vendor_index is resolved to vendor_ids[vendor_index].
-    category_slug is resolved to category_map[category_slug].
+    Insert product rows and return a list of product ids ALIGNED with
+    products_data by position — None where a product was skipped (out-of-range
+    vendor_index). Reviews index into products_data positions, so the alignment
+    must survive skips or every later review lands on the wrong product.
     """
     client = _get_client()
-    rows = []
+    rows: list[dict[str, Any]] = []
+    ids_by_position: list[str | None] = []
     for p in products_data:
         vendor_index = p["vendor_index"]
         if vendor_index < 0 or vendor_index >= len(vendor_ids):
             log.warning("vendor_index %d out of range, skipping product %s", vendor_index, p.get("name"))
+            ids_by_position.append(None)
             continue
         vendor_id = vendor_ids[vendor_index]
         category_slug = p.get("category_slug", "")
         category_id = category_map.get(category_slug)  # None if slug not found
 
-        rows.append(
-            {
-                "id": str(uuid.uuid4()),
-                "vendor_id": vendor_id,
-                "category_id": category_id,
-                "name": p["name"],
-                "description": p.get("description", ""),
-                "price_cents": p["price_cents"],
-                "currency": "CAD",
-                "rating": p["rating"],
-                "image_url": None,
-                "options": p.get("options", []),
-                "ai_generated": True,
-                "region_id": region_id,
-            }
-        )
-    resp = client.table("products").insert(rows).execute()
-    return resp.data or rows
+        row = {
+            "id": str(uuid.uuid4()),
+            "vendor_id": vendor_id,
+            "category_id": category_id,
+            "name": p["name"],
+            "description": p.get("description", ""),
+            "price_cents": p["price_cents"],
+            "currency": "CAD",
+            "rating": p["rating"],
+            "image_url": None,
+            "options": p.get("options", []),
+            "ai_generated": True,
+            "region_id": region_id,
+        }
+        rows.append(row)
+        ids_by_position.append(row["id"])
+    if rows:
+        client.table("products").insert(rows).execute()
+    return ids_by_position
 
 
 def insert_reviews(
     reviews_data: list[dict[str, Any]],
-    product_ids: list[str],
+    product_ids: list[str | None],
 ) -> list[dict[str, Any]]:
     """
     Insert review rows.
-    product_index is resolved to product_ids[product_index].
+    product_index is resolved to product_ids[product_index]; entries that are
+    None (their product was skipped) or out of range are dropped.
     """
     client = _get_client()
     rows = []
@@ -161,10 +178,14 @@ def insert_reviews(
         if product_index < 0 or product_index >= len(product_ids):
             log.warning("product_index %d out of range, skipping review", product_index)
             continue
+        product_id = product_ids[product_index]
+        if product_id is None:
+            log.warning("product_index %d points at a skipped product, skipping review", product_index)
+            continue
         rows.append(
             {
                 "id": str(uuid.uuid4()),
-                "product_id": product_ids[product_index],
+                "product_id": product_id,
                 "author": r["author"],
                 "rating": r["rating"],
                 "body": r["body"],
