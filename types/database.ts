@@ -262,6 +262,7 @@ export type Database = {
           options: Json
           price_cents: number
           rating: number
+          region_id: string | null
           vendor_id: string
         }
         Insert: {
@@ -276,6 +277,7 @@ export type Database = {
           options?: Json
           price_cents: number
           rating?: number
+          region_id?: string | null
           vendor_id: string
         }
         Update: {
@@ -290,6 +292,7 @@ export type Database = {
           options?: Json
           price_cents?: number
           rating?: number
+          region_id?: string | null
           vendor_id?: string
         }
         Relationships: [
@@ -298,6 +301,13 @@ export type Database = {
             columns: ["category_id"]
             isOneToOne: false
             referencedRelation: "categories"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "products_region_id_fkey"
+            columns: ["region_id"]
+            isOneToOne: false
+            referencedRelation: "regions"
             referencedColumns: ["id"]
           },
           {
@@ -445,6 +455,7 @@ export type Database = {
           locale: string
           name: string
           rating: number
+          region_id: string | null
         }
         Insert: {
           created_at?: string
@@ -454,6 +465,7 @@ export type Database = {
           locale?: string
           name: string
           rating?: number
+          region_id?: string | null
         }
         Update: {
           created_at?: string
@@ -463,8 +475,17 @@ export type Database = {
           locale?: string
           name?: string
           rating?: number
+          region_id?: string | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "vendors_region_id_fkey"
+            columns: ["region_id"]
+            isOneToOne: false
+            referencedRelation: "regions"
+            referencedColumns: ["id"]
+          },
+        ]
       }
     }
     Views: {
