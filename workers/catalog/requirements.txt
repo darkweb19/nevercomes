@@ -1,0 +1,6 @@
+anthropic
+langgraph
+supabase
+pydantic>=2
+python-dotenv
+pytest

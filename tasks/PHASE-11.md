@@ -11,7 +11,8 @@ the trigger/pre-seed infra. Slice D (browse integration) is **deferred** — des
 - Slice D deferred until the Claude Design screen exists
 
 ## Verified against repo
-- `regions.catalog_generated`, `products.ai_generated`, `vendors.ai_generated` exist already
+- `regions.catalog_generated`, `products.ai_generated`, `reviews.ai_generated` exist already
+  (NOT vendors — generated vendors are identified by `region_id is not null`)
 - `products` / `vendors` have **no `region_id`** → Slice A migration
 - Catalog tables are RLS public-read, no write policies → worker writes via `service_role`
 - No `workers/` or Python code yet; `.env.example` lacks `ANTHROPIC_API_KEY`
@@ -19,27 +20,29 @@ the trigger/pre-seed infra. Slice D (browse integration) is **deferred** — des
 
 ---
 
-## Slice A — migration: region-scoped catalog (commit 1)
-- [ ] New migration `supabase/migrations/<ts>_phase11_region_catalog.sql`:
+## Slice A — migration: region-scoped catalog (commit 1) ✅ `b59d914`
+- [x] New migration `supabase/migrations/20260710205523_phase11_region_catalog.sql`:
       nullable `region_id uuid references regions(id) on delete cascade` on `vendors` + `products`
       (`NULL` = global floor: seeded products serve every region under generated rows)
-- [ ] Indexes `vendors_region_id_idx`, `products_region_id_idx`
-- [ ] RLS unchanged — note in migration comment why (public-read only; worker uses service_role)
-- [ ] `npm run db:reset` → `npm run db:types` → `npm run verify` green
-- [ ] Commit migration + regenerated `types/database.ts` together
+- [x] Indexes `vendors_region_id_idx`, `products_region_id_idx`
+- [x] RLS unchanged — note in migration comment why (public-read only; worker uses service_role)
+- [x] `npm run db:reset` → `npm run db:types` → `npm run verify` green (154 tests)
+- [x] Commit migration + regenerated `types/database.ts` together
 
 ## Slice B — worker `workers/catalog/` (commit 2)
-- [ ] Python 3.12 project: `langgraph`, `anthropic`, `supabase`, `pydantic`; model `claude-haiku-4-5`
-      with structured outputs (`client.messages.parse()`); no `effort` param (unsupported on Haiku)
-- [ ] LangGraph pipeline: region_brief → vendors (5–8 fictional) → products (~40, integer
+- [x] Python project: `langgraph`, `anthropic`, `supabase`, `pydantic>=2`; model `claude-haiku-4-5`
+      with structured outputs (`output_config.format` json_schema + pydantic validation);
+      no `effort` param (unsupported on Haiku)
+- [x] LangGraph pipeline: region_brief → vendors (5–8 fictional) → products (~40, integer
       `price_cents`, `options` jsonb) → reviews (deadpan) → validate (pydantic + real-brand
-      blocklist; retry once then fail) → upsert (service_role; set `catalog_generated`;
-      `events` row `catalog_generated` w/ counts, model, usage, seed)
-- [ ] Idempotency: skip `catalog_generated = true` regions unless `--force`
-- [ ] CLI: `python -m catalog.run --postal-prefix M5V` | `--all-pending [--max-regions N]` | `--force`
-- [ ] Env: `workers/catalog/.env.example` (SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY,
-      ANTHROPIC_API_KEY); add ANTHROPIC_API_KEY note to root `.env.example` (never NEXT_PUBLIC_)
-- [ ] pytest: validators, blocklist, price bounds, idempotency guard (mocked DB/LLM, no live calls)
+      blocklist, word-boundary matching; retry once then abort) → upsert (service_role; set
+      `catalog_generated`; `events` row `catalog_generated` w/ counts, model, temperature, usage)
+- [x] Idempotency: skip `catalog_generated = true` regions unless `--force` (force deletes the
+      region's vendors first; FK cascade clears products/reviews; global floor untouched)
+- [x] CLI: `python -m catalog.run --postal-prefix M5V` | `--all-pending [--max-regions N]` | `--force`
+- [x] Env: `workers/catalog/.env.example` (SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY,
+      ANTHROPIC_API_KEY); ANTHROPIC_API_KEY note added to root `.env.example` (never NEXT_PUBLIC_)
+- [x] pytest: 95 tests — validators, blocklist, price bounds, idempotency guard (no network)
 
 ## Slice C — trigger + pre-seed (commit 3)
 - [ ] `.github/workflows/catalog.yml`: cron ~15 min → `--all-pending --max-regions 5`;

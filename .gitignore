@@ -26,6 +26,12 @@ coverage/
 playwright-report/
 test-results/
 
+# python (workers/)
+.venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+
 # misc
 .DS_Store
 *.log
