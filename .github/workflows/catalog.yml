@@ -1,0 +1,68 @@
+name: Catalog worker
+
+# Generates per-region AI catalogs OFFLINE (spec §6) — never on the request path.
+#   - schedule: fills any region with catalog_generated=false (cold regions from first visits).
+#   - workflow_dispatch: manual runs — pre-seed the GTA launch regions, or one FSA (optionally --force).
+#
+# Required repo secrets:
+#   SUPABASE_URL               (prod project URL — already set for keep-alive)
+#   SUPABASE_SERVICE_ROLE_KEY  (server-only; catalog writes bypass RLS)
+#   ANTHROPIC_API_KEY          (worker model: Claude Haiku 4.5)
+
+on:
+  schedule:
+    - cron: '*/15 * * * *'
+  workflow_dispatch:
+    inputs:
+      postal_prefix:
+        description: 'Single FSA to generate (blank = all pending)'
+        required: false
+        default: ''
+      force:
+        description: 'Regenerate even if already filled (single FSA only)'
+        type: boolean
+        default: false
+      preseed:
+        description: 'Upsert the GTA launch regions first'
+        type: boolean
+        default: false
+
+# One worker at a time — the catalog_generated flag is the idempotency guard,
+# but overlapping runs could still double-generate a region mid-flight.
+concurrency:
+  group: catalog-worker
+  cancel-in-progress: false
+
+jobs:
+  generate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    defaults:
+      run:
+        working-directory: workers/catalog
+    env:
+      SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+      SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+      ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+      POSTAL_PREFIX: ${{ inputs.postal_prefix }}
+      FORCE_FLAG: ${{ inputs.force && '--force' || '' }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: pip
+          cache-dependency-path: workers/catalog/requirements.txt
+      - run: pip install -r requirements.txt
+
+      - name: Pre-seed launch regions (GTA)
+        if: github.event_name == 'workflow_dispatch' && inputs.preseed
+        run: python -m catalog.preseed
+
+      - name: Generate one region
+        if: github.event_name == 'workflow_dispatch' && inputs.postal_prefix != ''
+        run: python -m catalog.run --postal-prefix "$POSTAL_PREFIX" $FORCE_FLAG
+
+      - name: Generate all pending
+        if: github.event_name == 'schedule' || (github.event_name == 'workflow_dispatch' && inputs.postal_prefix == '')
+        run: python -m catalog.run --all-pending --max-regions 5
