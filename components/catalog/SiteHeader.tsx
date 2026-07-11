@@ -5,6 +5,8 @@ import { useCart } from "@/lib/store/cart";
 import { useCartReady } from "@/lib/store/useCartReady";
 import { Input } from "@/components/ui/Input";
 import { ThemeToggle } from "@/components/ui/ThemeToggle";
+import { RegionStatusPill } from "./RegionStatusPill";
+import type { BrowsePhase } from "@/lib/catalog/region";
 
 interface SiteHeaderProps {
   /**
@@ -14,6 +16,8 @@ interface SiteHeaderProps {
    */
   search?: string;
   onSearch?: (value: string) => void;
+  /** Region + catalog readiness pill (browse only). Omit to hide it. */
+  region?: { prefix: string; phase: BrowsePhase };
 }
 
 /**
@@ -22,7 +26,7 @@ interface SiteHeaderProps {
  *
  * Reused across browse + product pages; pass `search`/`onSearch` only on browse.
  */
-export function SiteHeader({ search, onSearch }: SiteHeaderProps) {
+export function SiteHeader({ search, onSearch, region }: SiteHeaderProps) {
   // Selector returns the count number directly; re-renders only when count changes.
   // Show 0 until the persisted cart has rehydrated, so the first client render
   // matches the (empty) server render and React doesn't flag a hydration mismatch.
@@ -68,12 +72,16 @@ export function SiteHeader({ search, onSearch }: SiteHeaderProps) {
 
         {/* ── Right cluster ─────────────────────────────────────────────── */}
         <div className="ml-auto flex items-center gap-3">
-          <span
-            className="hidden font-mono text-xs text-fg-faint sm:block"
-            aria-hidden="true"
-          >
-            24/7 &middot; CA
-          </span>
+          {region ? (
+            <RegionStatusPill region={region.prefix} phase={region.phase} />
+          ) : (
+            <span
+              className="hidden font-mono text-xs text-fg-faint sm:block"
+              aria-hidden="true"
+            >
+              24/7 &middot; CA
+            </span>
+          )}
 
           {/* Leaderboard link */}
           <Link

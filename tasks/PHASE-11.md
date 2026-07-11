@@ -2,7 +2,8 @@
 
 Spec §6: catalog generated **per region, once, offline**, cached in Postgres forever — the
 request path never calls an LLM. This phase ships the schema deltas, the offline worker, and
-the trigger/pre-seed infra. Slice D (browse integration) is **deferred** — design-gated.
+the trigger/pre-seed infra. Slice D (browse integration) shipped once its design was provided
+(2026-07-11).
 
 ## Decisions (Sujan, 2026-07-10)
 - Worker model: **Claude Haiku 4.5** (`claude-haiku-4-5`, $1/$5 per MTok — est. < $0.50/region)
@@ -53,8 +54,31 @@ the trigger/pre-seed infra. Slice D (browse integration) is **deferred** — des
       then generates pending; +5 pytest tests (100 total)
 - [x] `workers/catalog/README.md`: setup, local run against `npm run db:start`, secrets, cost
 
+## Slice D — region-aware `/browse` cold-region states (commit 4) [design provided 2026-07-11]
+Design: Claude Design "NeverComes cold region states" (`BrowseScreen.dc.html`, phase =
+cold | filling | warm + reduced variant). Decisions (Sujan): default region **M5V** + `?region`
+override; **read-only + poll** (no migration, no realtime, no write path — a cold visit does not
+itself trigger generation).
+- [x] Pure `lib/catalog/region.ts`: `resolveBrowseRegion` (M5V default + FSA validation),
+      `phaseForRegion`, `catalogScope` — no React/Supabase. +12 unit tests (`region.test.ts`)
+- [x] `lib/supabase/queries.ts`: `regionScope` on `getCatalogPage` (`{mode:"global"}` = floor,
+      `{mode:"region"}` = `region_id is null OR = id`); new `getRegionByPrefix` + `getRegionVendors`
+      (vendor + `products(count)` embed)
+- [x] `app/browse/page.tsx`: ISR shell now fetches the **global floor** explicitly (region-independent)
+- [x] Components (build to design, tokens only): `ReceiptPrinter` (light `paper-000`/`ink-900` stub,
+      staggered `ncReceiptLine` + `ncCursorBlink`, honest redaction rows), `PreparingBanner`,
+      `StoreReadyBanner`, `NearbyVendors` (ghosts → real cards), `RegionStatusPill`; `SiteHeader`
+      gains an optional region pill
+- [x] `CatalogBrowser`: resolves FSA via `useSyncExternalStore` (hydration-safe, keeps page static),
+      polls a cold region (12s, visibility-aware) → cold→filling→warm; threads `regionScope` into
+      filter-refetch + load-more; filling confirmation dwells `FILL_DWELL_MS` then leaves
+- [x] Keyframes `ncSettle` + `ncGhost` added to `globals.css` (reused `ncReceiptLine`/`ncCursorBlink`/
+      `ncFadeIn`/`ncPulse`); `perf` border color added to Tailwind theme
+- [x] Reduced motion: inherits the global `prefers-reduced-motion` collapse (static receipt, no
+      ghost pulse, instant settle) — same convention as `ProcessingStep`
+
 ## Out of scope (deferred)
-- Slice D — region-scoped `/browse` + "preparing your store…" state (design-gated)
+- Real geo/IP region detection (Phase 12 localize); cold-visit generation trigger + realtime fill
 - Product imagery / CDN; OSRM / Overpass
 
 ## Verification
@@ -67,6 +91,9 @@ the trigger/pre-seed infra. Slice D (browse integration) is **deferred** — des
       `--force` skips (0 tokens, no duplication)
 - [x] C: workflow reviewed; preseed logic tested (live GTA fill left for the pre-seed dispatch)
 - [x] Phase end: `npm run verify` green + `npm run test:e2e` 8/8 green
+- [x] D: `verify` green (typecheck + lint + 163 unit incl. 12 region tests); e2e 8/8 green
+      (browse is the core-loop entry — cold state exercised in-browser); cold SSR confirmed
+      (banner + PREPARING pill + 3 ghosts + 12 global-floor products); global-floor count = 30
 - [x] DoD code-review on `main...HEAD` — verdict "fix first"; both blockers fixed in `299ee5d`
       (position-aligned product ids w/ None gaps; id mappings from client-built rows, never
       response order; validate node now bounds-checks indexes) + nits applied (env-block force

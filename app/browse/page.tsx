@@ -23,10 +23,13 @@ export default async function BrowsePage() {
   const supabase = createPublicClient();
 
   // Run in parallel — both are public-read, no auth needed.
+  // The ISR shell is region-independent: it renders the GLOBAL floor so the
+  // cached HTML is identical for every visitor. The client CatalogBrowser layers
+  // the visitor's region-specific catalog on top.
   const [categories, { items: initialItems, count: initialCount }] =
     await Promise.all([
       getCategories(supabase),
-      getCatalogPage(supabase, { limit: 12 }),
+      getCatalogPage(supabase, { limit: 12, regionScope: { mode: "global" } }),
     ]);
 
   return (

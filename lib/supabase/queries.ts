@@ -1,6 +1,7 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
 import type { Database, Tables } from "@/types/database";
 import { sanitizeSearch, type CatalogSort } from "@/lib/catalog/filter";
+import type { CatalogRegionScope } from "@/lib/catalog/region";
 
 export type Product = Tables<"products">;
 export type Vendor = Tables<"vendors">;
@@ -25,7 +26,18 @@ export interface CatalogQuery {
   categoryId?: string | null;
   search?: string | null;
   sort?: CatalogSort;
+  /**
+   * Region scoping. Omit for the legacy region-blind query.
+   *   { mode: "global" }            → global floor only (region_id IS NULL)
+   *   { mode: "region", regionId }  → global floor + that region's local rows
+   */
+  regionScope?: CatalogRegionScope;
 }
+
+/** A region's vendor with its product count — powers the "nearby vendors" cards. */
+export type RegionVendor = Pick<Vendor, "id" | "name" | "kind" | "rating"> & {
+  itemCount: number;
+};
 
 export interface CatalogPage {
   items: CatalogProduct[];
@@ -103,6 +115,15 @@ export async function getCatalogPage(
 
   if (categoryId) q = q.eq("category_id", categoryId);
 
+  // Region scope: the global floor is always visible; a warm region layers its
+  // local rows on top. Cold/unknown regions see the floor alone.
+  const { regionScope } = query;
+  if (regionScope?.mode === "global") {
+    q = q.is("region_id", null);
+  } else if (regionScope?.mode === "region") {
+    q = q.or(`region_id.is.null,region_id.eq.${regionScope.regionId}`);
+  }
+
   const term = sanitizeSearch(search);
   if (term) q = q.or(`name.ilike.%${term}%,description.ilike.%${term}%`);
 
@@ -143,6 +164,55 @@ export async function getProductDetail(
 
   if (error) throw error;
   return data;
+}
+
+/**
+ * Look up a region by its FSA (postal prefix) to decide the browse phase.
+ * A miss is expected (cold region) and returns null — never throws on absence.
+ * Mirrors the resolution in app/api/orders/route.ts.
+ */
+export async function getRegionByPrefix(
+  supabase: Client,
+  prefix: string,
+): Promise<Pick<Tables<"regions">, "id" | "catalog_generated"> | null> {
+  const { data, error } = await supabase
+    .from("regions")
+    .select("id, catalog_generated")
+    .eq("postal_prefix", prefix)
+    .limit(1)
+    .maybeSingle();
+
+  if (error) throw error;
+  return data;
+}
+
+/**
+ * The local vendors for a warm region, each with its product count. Powers the
+ * "nearby vendors" cards once the region's catalog has been generated.
+ */
+export async function getRegionVendors(
+  supabase: Client,
+  regionId: string,
+): Promise<RegionVendor[]> {
+  const { data, error } = await supabase
+    .from("vendors")
+    .select("id, name, kind, rating, products(count)")
+    .eq("region_id", regionId)
+    .order("rating", { ascending: false })
+    .returns<
+      (Pick<Vendor, "id" | "name" | "kind" | "rating"> & {
+        products: { count: number }[];
+      })[]
+    >();
+
+  if (error) throw error;
+  return (data ?? []).map((v) => ({
+    id: v.id,
+    name: v.name,
+    kind: v.kind,
+    rating: v.rating,
+    itemCount: v.products[0]?.count ?? 0,
+  }));
 }
 
 /** Fake reviews for a product, newest first. */
