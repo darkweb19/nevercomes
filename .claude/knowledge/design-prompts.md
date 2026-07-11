@@ -18,8 +18,8 @@ Companion to `design.md`, `spec.md`, and `execution-phases.md`. Paste these into
 - **Handoff:** export the **Claude Code handoff bundle**, or paste the screen into the relevant
   `/new-feature <n>` session. Claude Code reimplements in Next.js + Tailwind against your tokens.
 - **Design-gated phases:** 3 (browse + product), 4 (cart), 5 (checkout), 7 (tracker), 8 (landing),
-  9 (/me + account upgrade), 10 (viral: share card + leaderboard + live counters). Phases 0, 1,
-  2, 6 need no screen.
+  9 (/me + account upgrade), 10 (viral: share card + leaderboard + live counters),
+  11-D (browse — cold region "preparing your store…" state). Phases 0, 1, 2, 6 need no screen.
 - **Recommended order:** tracker → browse+product → cart → checkout → landing (landing last; its
   hero teases the tracker).
 
@@ -208,6 +208,50 @@ SCREEN 3 — live-counter moments (small components, not a page):
 - Show a reduced-motion variant: counters update as stepped text changes, no pulsing.
 
 Show all three. Then I'll refine.
+```
+
+---
+
+## Phase 11-D — Browse: cold-region "preparing your store…" state
+
+```
+Design ONE new STATE for the existing NeverComes /browse screen (do not redesign browse — keep
+its layout: category strip, filter/sort, search, multi-column receipt-item product grid). Use my
+connected design system. Desktop web first (~1440px), then tablet (~768px) and mobile (~390px).
+Deadpan tone, receipt aesthetic.
+
+Context: the catalog is generated per postal region by an offline worker, usually within a few
+minutes of a region's first-ever visitor. A visitor from a cold region still sees the GLOBAL
+catalog (a small set of products that exist everywhere) — the store is never empty and never
+blocked. What's "preparing" is their LOCAL layer: nearby fictional vendors and region-flavored
+products that will slot in on top.
+
+Design three states of the same screen:
+
+STATE 1 — cold region (the main deliverable):
+- The global products render normally and stay fully browsable/orderable.
+- A calm banner or inline strip announces the local store is being prepared — phrased deadpan
+  ("Preparing your store. The wait is the product." — feel free to improve the line).
+- The progress metaphor is a RECEIPT PRINTING, not a spinner: a receipt stub emerging line by
+  line from a perforated edge, or vendor lines appearing as faded ink that darkens. No spinners,
+  no progress bars, no percent — this store is honest about nothing, including load time.
+- Optionally: 2–3 ghost vendor-card placeholders (faded ink outlines) where local vendors will
+  appear, so the promise is spatial, not just verbal.
+
+STATE 2 — the moment it fills (cold → warm transition):
+- The local vendors/products arrive into the grid — a quiet ink-settling or stamp moment, not
+  confetti. The banner resolves to a small one-line confirmation ("Your store exists now.") that
+  then goes away.
+
+STATE 3 — warm region (the default, for contrast):
+- Browse as it is today, local + global products mixed; no banner. Show it so the delta is clear.
+
+Also show a reduced-motion variant of STATE 1: the receipt-printer animation degrades to a
+static stub with stepped text (no line-by-line animation), and the fill-in transition becomes an
+instant swap.
+
+Show all three states (+ the reduced-motion variant) at desktop, and STATE 1 at tablet and
+mobile. Then I'll refine.
 ```
 
 ---
