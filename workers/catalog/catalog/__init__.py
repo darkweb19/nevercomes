@@ -1,1 +1,0 @@
-# catalog worker package
