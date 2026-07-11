@@ -19,6 +19,7 @@ const config: Config = {
         overlay: "var(--overlay)",
         // Borders
         hairline: "var(--border-hairline)",
+        perf: "var(--border-perf)", // dashed perforation / tear line
         // Text (namespaced under `fg` to avoid colliding with the fontSize scale
         // on the shared `text-` prefix, e.g. text-base size vs text-body color).
         fg: {

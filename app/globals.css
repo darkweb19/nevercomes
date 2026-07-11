@@ -224,3 +224,31 @@
     opacity: 0;
   }
 }
+
+/* ── Phase 11 Slice D: cold-region browse ──────────────────────────────────
+ * Both degrade automatically under the global prefers-reduced-motion rule
+ * (duration → 0.01ms, iteration-count → 1): ncSettle resolves instantly to its
+ * final resting state (an instant swap), ncGhost stops on its first cycle at
+ * the faded resting opacity. */
+
+/* Local vendor/product cards settling into the grid the moment the store fills. */
+@keyframes ncSettle {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Ghost placeholder breathe while the local layer is still being indexed. */
+@keyframes ncGhost {
+  0%, 100% {
+    opacity: 0.5;
+  }
+  50% {
+    opacity: 0.8;
+  }
+}
