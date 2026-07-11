@@ -71,7 +71,7 @@ Stand up the project skeleton; build no features.
 - **Phase 9 — Retention:** accounts (anon→upgrade), `me` stats/history, "money saved", streaks.
 - **Phase 10 — Viral:** OG share-card image route, leaderboard, live "people shopping now" counters.
 - **Phase 11 — AI catalog:** Python/LangGraph generator + scheduled trigger; infinite inventory
-  written offline to Postgres + CDN (never on the request path).
+  written offline to Postgres + CDN (never on the request path). [AI generation removed in Phase 12 — replaced with a single static catalog shipped as a data migration (`supabase/migrations/20260711000000_remove_ai_catalog_static_data.sql`); no recurring Haiku cost, no `ANTHROPIC_API_KEY` required.]
 - **Phase 12 — Localize + monetize hooks:** CA/US locales (local vendors, CAD/USD, local map
   routes), affiliate "buy it for real" bridge, premium cosmetics.
 

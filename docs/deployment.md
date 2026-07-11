@@ -5,8 +5,7 @@
 | What | Where | Trigger |
 |------|-------|---------|
 | Next.js frontend | Vercel | Auto on merge to `main` |
-| Supabase schema | Supabase prod | Auto via `db.yml` on merge to `main` |
-| Catalog worker | GitHub Actions | Cron every 15 min + manual dispatch |
+| Supabase schema + catalog data | Supabase prod | Auto via `db.yml` on merge to `main` |
 | Keep-alive ping | GitHub Actions | Cron Mon/Thu 06:00 UTC |
 
 No servers to manage. No containers. No manual deploys under normal operation.
@@ -23,16 +22,19 @@ No servers to manage. No containers. No manual deploys under normal operation.
   - `NEXT_PUBLIC_POSTHOG_KEY`
   - `NEXT_PUBLIC_POSTHOG_HOST`
 
-> **Never add** `SUPABASE_SERVICE_ROLE_KEY` or `ANTHROPIC_API_KEY` to Vercel — the app
-> never uses them. Those keys belong to GitHub Actions secrets only.
+> **Never add** `SUPABASE_SERVICE_ROLE_KEY` to Vercel — the app never uses it.
+> That key belongs to GitHub Actions secrets only.
 
 ### GitHub repo secrets (already set)
 `db.yml` needs: `SUPABASE_ACCESS_TOKEN`, `SUPABASE_DB_PASSWORD`, `SUPABASE_PROJECT_REF`
 
-`catalog.yml` + `keep-alive.yml` need: `SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY`,
-`SUPABASE_ANON_KEY`, `ANTHROPIC_API_KEY`
+`keep-alive.yml` needs: `SUPABASE_URL`, `SUPABASE_ANON_KEY`
 
-All six are already set under Settings → Secrets and variables → Actions.
+All are already set under Settings → Secrets and variables → Actions.
+
+> **Note:** `ANTHROPIC_API_KEY` and `SUPABASE_SERVICE_ROLE_KEY` were used by the now-removed
+> catalog worker (`catalog.yml`). Neither is needed anymore. The static catalog ships as a
+> data migration (`supabase/migrations/`) so prod and local always have the same dataset.
 
 ### Supabase dashboard — ACTION REQUIRED (out-of-band toggles, not migrations)
 
@@ -66,48 +68,14 @@ npm run db:status    # shows which migrations are applied locally vs remotely
 
 ---
 
-## 4. Catalog worker (Phase 11)
+## 4. Catalog data
 
-After the phase-11 PR merges to `main`:
+The static catalog (4 vendors, 30 products, 7 reviews, 2 dev regions) ships as a committed
+data migration (`supabase/migrations/`). There is no separate catalog worker, no cron job,
+and no Anthropic API key required.
 
-### Initial preseed (once, at launch)
-
-Dispatch the "Catalog worker" workflow manually from the Actions tab (or via CLI):
-
-```bash
-gh workflow run catalog.yml -f preseed=true
-```
-
-This calls `catalog.preseed`, which upserts the GTA launch regions (~10 FSAs) and generates
-each one. Each region costs well under $0.50 on Claude Haiku 4.5.
-
-### Ongoing (automatic)
-
-The 15-min cron runs `--all-pending --max-regions 5`. Any region where
-`regions.catalog_generated = false` (created by a first visitor to a cold postal prefix)
-is picked up and filled automatically — no action needed.
-
-### Single-region regeneration (manual)
-
-```bash
-gh workflow run catalog.yml -f postal_prefix=M5V -f force=true
-```
-
-Wipes and regenerates that FSA only.
-
-### Monitoring
-
-```bash
-gh run list --workflow=catalog.yml     # recent runs + status
-gh run view <run-id> --log             # full logs for a run
-```
-
-Audit trail: every run writes an `events` row with `type = catalog_generated`, including
-counts, model, temperature, and token usage. Query in the Supabase SQL editor (read-only):
-
-```sql
-select * from events where type = 'catalog_generated' order by created_at desc limit 20;
-```
+`db.yml` applies all pending migrations on merge to `main`, so prod and local always have
+the same catalog dataset. No manual preseed step is needed.
 
 ---
 
@@ -119,10 +87,11 @@ Run these after any deploy that touches the core loop or catalog:
 - [ ] Place an anonymous order end-to-end — lands on `/track`, courier never arrives
 - [ ] Check `/leaderboard` — renders without errors
 - [ ] Open `/api/og?...` with a valid order slug — share card image returns 200
-- [ ] After preseed: confirm catalog populated (Supabase SQL editor, read-only):
+- [ ] Confirm catalog populated (Supabase SQL editor, read-only):
 
 ```sql
-select count(*) from products where region_id is not null;
+select count(*) from products;   -- expect 30
+select count(*) from vendors;    -- expect 4
 ```
 
 ---
